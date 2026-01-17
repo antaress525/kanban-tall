@@ -26,7 +26,7 @@ new #[Layout('layouts::guest'), Title('Se connecter')] class extends Component
 };
 ?>
 
-<form wire:submit.prevent="login" class="bg-white border border-neutral-200 rounded-lg w-sm p-6 space-y-4">
+<form wire:submit.prevent="login" class="flex flex-col justify-center bg-white border border-neutral-200 rounded-lg w-sm p-6 space-y-4">
     <x-ui.field>
         <x-ui.label>Email</x-ui.label>
         <x-ui.input type="email" wire:model="form.email" name="email" placeholder="Votre email" required autofocus />
@@ -45,4 +45,8 @@ new #[Layout('layouts::guest'), Title('Se connecter')] class extends Component
         <x-ui.spinner class="not-in-data-loading:hidden size-4.5 fill-white" />
         Se connecter
     </x-ui.button>
+    <span class="text-center text-sm text-neutral-400">
+        Vous n'avez pas de compte?
+        <x-ui.link class="text-black" href="{{ route('auth.register') }}" wire:navigate>S'inscrire</x-ui.link>
+    </span>
 </form>

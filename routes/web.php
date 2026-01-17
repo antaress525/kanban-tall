@@ -10,4 +10,5 @@ Route::livewire('/', 'pages::home')->name('dashboard');
 
 Route::prefix('/')->name('auth.')->middleware(['guest'])->group(function() {
     Route::livewire('login', 'pages::auth.login')->name('login');
+    Route::livewire('register', 'pages::auth.⚡register')->name('register');
 });
