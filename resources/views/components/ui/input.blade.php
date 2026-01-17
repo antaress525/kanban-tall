@@ -58,7 +58,7 @@
 
         // Focus (léger : 1px)
         'focus:border-violet-500',
-        'focus:ring-1',
+        'focus:ring-2',
         'focus:ring-violet-500/30',
 
         // Disabled
@@ -68,7 +68,7 @@
     ]);
 @endphp
 
-<div {{ $attributes->merge(['class' => 'relative']) }}>
+<div class="relative">
     {{-- Prefix --}}
     @isset($prefix)
         <span class="absolute inset-y-0 left-0 flex items-center justify-center w-10 text-neutral-500 pointer-events-none">
@@ -86,7 +86,7 @@
         aria-invalid="{{ $attributes->get('aria-invalid', 'false') }}"
         {{ $disabled ? 'disabled' : '' }}
         {{ $required ? 'required' : '' }}
-        class="{{ $inputClasses }}"
+        {{ $attributes->merge(['class' => $inputClasses]) }}
     >
 
     {{-- Suffix --}}
