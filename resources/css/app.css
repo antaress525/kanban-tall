@@ -8,4 +8,5 @@
 @theme {
     --font-sans: 'Figtree', 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    --aside-width: 240px;
 }
