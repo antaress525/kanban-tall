@@ -2,16 +2,31 @@
 
 use Livewire\Component;
 use Livewire\Attributes\Title;
+use Livewire\Attributes\Url;
 use Livewire\Attributes\Computed;
 use Livewire\WithPagination;
+use Illuminate\Database\Eloquent\Builder;
+
 
 new #[Title('Mes tableau')] class extends Component
 {
     use WithPagination;
 
+    #[Url(except: '', as: 'q')]
+    public string $search = '';
+
     #[Computed]
     public function boards() {
-        return auth()->user()->boards()->paginate(5);
+        return auth()->user()
+            ->boards()
+            ->when($this->search, function(Builder $query, string $search) {
+                return $query->whereLike('name', "%$search%");
+            })
+            ->paginate(5);
+    }
+
+    public function updatedSearch() {
+        $this->resetPage();
     }
 };
 ?>
@@ -25,9 +40,10 @@ new #[Title('Mes tableau')] class extends Component
 
     <!-- Search -->
     <div class="mb-9 sm:mb-14 flex items-center gap-x-2">
-        <x-ui.input name="searh" size="md" placeholder="Recherche">
+        <x-ui.input name="searh" wire:model.live.debounce.500ms="search" size="md" placeholder="Recherche">
             <x-slot:prefix>
-                <x-lucide-search class="size-4 text-neutral-500"/>
+                <x-ui.spinner wire:loading wire:target="search" class="size-4" />
+                <x-lucide-search wire:loading.remove wire:target="search"  class="size-4 text-neutral-500"/>
             </x-slot:prefix>
         </x-ui.input>
         <x-ui.button variant="secondary" size="md" class="font-medium">
