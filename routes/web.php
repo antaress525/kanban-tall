@@ -15,4 +15,5 @@ Route::prefix('/')->name('auth.')->middleware(['guest'])->group(function() {
 
 Route::prefix('board/')->name('board.')->middleware(['auth'])->group(function() { 
     Route::livewire('','pages::board.⚡index')->name('index');
+    Route::livewire('{board}','pages::board.⚡show')->name('show');
 });
