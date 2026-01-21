@@ -57,7 +57,7 @@ new #[Title('Mes tableau')] class extends Component
         @if ($this->boards->isNotEmpty())
             <div>
                 @foreach ($this->boards as $board)
-                    <livewire:board-item :board="$board" />
+                    <livewire:board-item :wire:key="$board->id" :board="$board" @board-deleted="$refresh" />
                 @endforeach
             </div>
             <div>
