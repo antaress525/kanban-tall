@@ -3,10 +3,15 @@
 use Livewire\Component;
 use App\Models\Board;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Url;
+use Illuminate\Database\Eloquent\Builder;
 
 new class extends Component
 {
     public Board $board;
+
+    #[Url(except: '')]
+    public string $search = '';
 
     public function mount(Board $board) {
         $this->board = $board->load(['tasks']);
@@ -15,8 +20,9 @@ new class extends Component
     #[Computed]
     public function tasks() {
         return $this->board->tasks()
-                ->orderBy('order')->get()
-                ->groupBy('status');
+            ->when($this->search, fn(Builder $query) => $query->whereLike('title', "%$this->search%"))
+            ->orderBy('order')->get()
+            ->groupBy('status');
     }
 
     public function render()
@@ -60,9 +66,10 @@ new class extends Component
             <x-lucide-sliders-horizontal class="size-4 text-neutral-500"/>
             Filtre
         </x-ui.button>
-        <x-ui.input name="search" size="md" class="w-full sm:w-3xs" placeholder="Recherche">
+        <x-ui.input name="search" wire:model.live.debounce.500ms="search" size="md" class="w-full sm:w-3xs" placeholder="Recherche">
             <x-slot:prefix>
-                <x-lucide-search class="size-4 text-neutral-500"/>
+                <x-ui.spinner wire:loading wire:target="search" class="size-4" />
+                <x-lucide-search wire:loading.remove wire:target="search" class="size-4 text-neutral-500"/>
             </x-slot:prefix>
         </x-ui.input>
     </div>
