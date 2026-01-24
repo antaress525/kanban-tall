@@ -15,6 +15,7 @@ new class extends Component
         $this->authorize('delete', $this->board);
         $this->board->delete();
         $this->dispatch('board-deleted');
+        $this->dispatch('notify', type: 'success', message: 'Le projet a été supprimé.');
     }
 };
 ?>
