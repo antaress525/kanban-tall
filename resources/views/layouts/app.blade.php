@@ -55,6 +55,7 @@
             </div>
         </nav>
         <main class="flex-1 h-full">{{ $slot }}</main>
+        <x-ui.notify />
         @livewireScripts
     </body>
 </html>
