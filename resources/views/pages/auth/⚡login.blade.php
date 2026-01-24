@@ -36,7 +36,7 @@ new #[Layout('layouts::guest'), Title('Se connecter')] class extends Component
     </x-ui.field>
     <x-ui.field>
         <x-ui.label>Mot de passe</x-ui.label>
-        <x-ui.input type="password" wire:model="form.password" name="password" placeholder="Votre mot de passe" required />
+        <x-ui.password-input wire:model="form.password" name="password" placeholder="Votre mot de passe" required />
         @error('form.password')
             <x-ui.error>{{ $message }}</x-ui.error>
         @enderror
