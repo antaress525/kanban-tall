@@ -56,6 +56,8 @@
         </nav>
         <main class="flex-1 h-full">{{ $slot }}</main>
         <x-ui.notify />
+        <!-- Modal Manager -->
+        <livewire:modals.modal-manager />
         @livewireScripts
     </body>
 </html>
