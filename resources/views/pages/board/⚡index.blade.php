@@ -15,6 +15,10 @@ new #[Title('Mes tableau')] class extends Component
     #[Url(except: '', as: 'q')]
     public string $search = '';
 
+    protected $listeners = [
+        'board-created' => '$refresh',
+    ];
+
     #[Computed]
     public function boards() {
         return auth()->user()
@@ -35,7 +39,9 @@ new #[Title('Mes tableau')] class extends Component
     <!-- Header -->
     <div class="flex items-center justify-between mb-8 sm:mb-13">
         <h2 class="text-lg md:text-xl font-poppins font-medium">Projets</h2>
-        <x-ui.button size="md" class="font-medium">Creer un projet</x-ui.button>
+        <x-ui.button size="md" class="font-medium" @click="$dispatch('open-modal', {type: 'center', component: 'modals.create-board', size: 'xs'})">
+            Creer un projet
+        </x-ui.button>
     </div>
 
     <!-- Search -->
@@ -75,5 +81,4 @@ new #[Title('Mes tableau')] class extends Component
             </div>
         @endif
     </div>
-
 </div>
