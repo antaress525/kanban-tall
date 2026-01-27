@@ -37,7 +37,7 @@ class BoardPolicy
      */
     public function update(User $user, Board $board): bool
     {
-        return false;
+        return $user->id === $board->user_id;
     }
 
     /**
