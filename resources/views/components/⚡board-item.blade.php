@@ -2,6 +2,7 @@
 
 use Livewire\Component;
 use App\Models\Board;
+use Livewire\Attributes\On;
 
 new class extends Component
 {
@@ -11,12 +12,18 @@ new class extends Component
         $this->board = $board;
     }
 
+    #[On('board-updated.{board.id}')]
+    public function refreshBoard() {
+        $this->board->refresh();
+    }
+
     public function delete() {
         $this->authorize('delete', $this->board);
         $this->board->delete();
         $this->dispatch('board-deleted');
         $this->dispatch('notify', type: 'success', message: 'Le projet a été supprimé.');
     }
+
 };
 ?>
 
@@ -29,8 +36,20 @@ new class extends Component
     </div>
 
     <!-- Desktop -->
-    <div class="z-10 hidden sm:flex items-center gap-x-3">
+    <div class="z-10 hidden sm:flex items-center gap-x-2">
         <span class="text-neutral-400 text-sm group-hover:hidden">{{ $board->created_at->diffForHumans() }}</span>
+
+        <!-- Edit -->
+        <x-ui.icon-button 
+            class="data-loading:bg-neutral-50 hidden group-hover:grid" 
+            @click="$dispatch('open-modal', {type: 'center', component: 'modals.update-board', size: 'xs', props: { board_id: '{{ $board->id }}' }})" 
+            title="Modifier"
+        >
+            <x-lucide-pencil class="size-4 text-neutral-400 in-data-loading:hidden" />
+            <x-ui.spinner class="size-4 fill-neutral-400 not-in-data-loading:hidden" />
+        </x-ui.icon-button>
+
+        <!-- Delete -->
         <x-ui.icon-button class="data-loading:bg-neutral-50 hidden group-hover:grid" wire:click="delete" title="Supprimer">
             <x-lucide-trash class="size-4 text-neutral-400 in-data-loading:hidden" />
             <x-ui.spinner class="size-4 fill-neutral-400 not-in-data-loading:hidden" />
@@ -38,7 +57,18 @@ new class extends Component
     </div>
 
     <!-- Mobile -->
-    <div class="z-10 sm:hidden">
+    <div class="z-10 flex items-end gap-x-1 sm:hidden">
+        <!-- Edit -->
+        <x-ui.icon-button 
+            class="data-loading:bg-neutral-50" 
+            @click="$dispatch('open-modal', {type: 'center', component: 'modals.update-board', size: 'xs', props: { board_id: '{{ $board->id }}' }})"
+            title="Supprimer"
+        >
+            <x-lucide-pencil class="size-4 text-neutral-400 in-data-loading:hidden" />
+            <x-ui.spinner class="size-4 fill-neutral-400 not-in-data-loading:hidden" />
+        </x-ui.icon-button>
+
+        <!-- Delete -->
         <x-ui.icon-button class="data-loading:bg-neutral-50" wire:click="delete" title="Supprimer">
             <x-lucide-trash class="size-4 text-neutral-400 in-data-loading:hidden" />
             <x-ui.spinner class="size-4 fill-neutral-400 not-in-data-loading:hidden" />
