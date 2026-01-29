@@ -15,7 +15,9 @@ new class extends Component
 
 <div class="bg-white border border-neutral-200 rounded p-2">
     <div class="flex items-center gap-x-2">
-        <x-ui.checkbox />
+        @if ($slot->has('checkbox'))
+            {{ $slot['checkbox'] }}
+        @endif
         <h4 class="text-sm font-medium">{{ $task->title }}</h4>
     </div>
     <p class="text-neutral-400 text-[13px] mb-2">{{ $task->description }}</p>

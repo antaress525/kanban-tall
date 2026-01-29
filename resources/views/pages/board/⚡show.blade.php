@@ -5,10 +5,12 @@ use App\Models\Board;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Illuminate\Database\Eloquent\Builder;
+use App\Models\Task;
 
 new class extends Component
 {
     public Board $board;
+    public array $selected = [];
 
     #[Url(except: '')]
     public string $search = '';
@@ -27,7 +29,13 @@ new class extends Component
             ->when($this->search, fn(Builder $query) => $query->whereLike('title', "%$this->search%"))
             ->orderBy('order')->get()
             ->groupBy('status');
-    } 
+    }
+
+    public function deleteSelected() {
+        Task::destroy($this->selected);
+        $this->reset('selected');
+        $this->dispatch('notify', type: 'success', message: 'Les taches on bien ete supprimer');
+    }
 
     public function render()
     {
@@ -83,12 +91,21 @@ new class extends Component
         <!-- to_do Column -->
         <x-ui.tasks.column>
             <!-- Column header -->
-            <x-ui.tasks.header :board_id="$board->id" status="to_do" class="bg-gray-800">A faire</x-tasks.header>
+            <x-ui.tasks.header 
+                :board_id="$board->id" 
+                status="to_do" class="bg-gray-800"
+            >
+                A faire
+            </x-tasks.header>
 
             <!-- Tasks -->
             <x-ui.tasks.container>
                 @foreach ($this->tasks->get('to_do', []) as $task)
-                    <livewire:task-item :task="$task" :wire:key="$task->id" />
+                    <livewire:task-item :task="$task" :wire:key="$task->id">
+                        <livewire:slot name="checkbox">
+                            <x-ui.checkbox :value="$task->id" wire:model="selected" /> 
+                        </livewire:slot>
+                    </livewire:task-item>
                 @endforeach
             </x-ui.tasks.container>
 
@@ -114,7 +131,11 @@ new class extends Component
             <!-- Tasks -->
             <x-ui.tasks.container>
                 @foreach ($this->tasks->get('in_progress', []) as $task)
-                    <livewire:task-item :task="$task" ::wire:key="$task->id" />
+                    <livewire:task-item :task="$task" :wire:key="$task->id">
+                        <livewire:slot name="checkbox">
+                            <x-ui.checkbox :value="$task->id" wire:model="selected" /> 
+                        </livewire:slot>
+                    </livewire:task-item>
                 @endforeach
             </x-ui.tasks.container>
 
@@ -141,7 +162,11 @@ new class extends Component
             <!-- Tasks -->
             <x-ui.tasks.container>
                 @foreach ($this->tasks->get('review', []) as $task)
-                    <livewire:task-item :task="$task" :wire:key="$task->id" />
+                     <livewire:task-item :task="$task" :wire:key="$task->id">
+                        <livewire:slot name="checkbox">
+                            <x-ui.checkbox :value="$task->id" wire:model="selected" /> 
+                        </livewire:slot>
+                    </livewire:task-item>
                 @endforeach
             </x-ui.tasks.container>
             
@@ -168,7 +193,11 @@ new class extends Component
             <!-- Tasks -->
             <x-ui.tasks.container>
                 @foreach ($this->tasks->get('done', []) as $task)
-                    <livewire:task-item :task="$task" ::wire:key="$task->id" />
+                     <livewire:task-item :task="$task" :wire:key="$task->id">
+                        <livewire:slot name="checkbox">
+                            <x-ui.checkbox :value="$task->id" wire:model="selected" /> 
+                        </livewire:slot>
+                    </livewire:task-item>
                 @endforeach
             </x-ui.tasks.container>
 
@@ -186,5 +215,33 @@ new class extends Component
                 Ajouter
             </x-ui.button>
         </x-ui.tasks.column>
+    </div>
+
+    <!-- Delete selected -->
+    <div 
+        x-show="$wire.selected.length > 0"
+        x-transition
+        x-cloak
+        class="fixed bottom-3.5 left-0 right-0 flex items-center justify-center gap-x-3.5"
+    >
+        <!-- Count -->
+        <span class="size-8 rounded-full text-white text-sm font-medium bg-black grid place-items-center" x-text="$wire.selected.length">
+        </span>
+
+        <!-- Action -->
+        <div class="p-1 rounded-full shadow-lg h-9 bg-black text-white w-28">
+            <button wire:click="deleteSelected" class="size-full px-0.5 flex items-center justify-center gap-x-1 text-[13px] font-medium rounded-full bg-red-500/15 text-red-500">
+                <x-lucide-trash-2 class="size-4 in-data-loading:hidden" />
+                <x-ui.spinner class="size-4 fill-red-500 not-in-data-loading:hidden" />
+                Supprimer
+            </button>
+        </div>
+
+        <!-- Close -->
+        <div class="size-8 rounded-full bg-black p-1 grid place-items-center">
+            <button @click="$wire.selected = []" class="hover:bg-white/10 size-full rounded-full grid place-items-center cursor-pointer">
+                <x-lucide-x class="size-3.5 text-white" />
+            </button>
+        </div>
     </div>
 </div>
