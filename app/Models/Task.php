@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Task extends Model
 {
+    protected $fillable = [
+        'title',
+        'status'
+    ];
     protected function casts(): array
     {
         return [

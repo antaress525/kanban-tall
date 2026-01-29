@@ -13,6 +13,10 @@ new class extends Component
     #[Url(except: '')]
     public string $search = '';
 
+    protected $listeners = [
+        'task-created' => '$refresh'
+    ];
+
     public function mount(Board $board) {
         $this->board = $board->load(['tasks']);
     }
@@ -23,7 +27,7 @@ new class extends Component
             ->when($this->search, fn(Builder $query) => $query->whereLike('title', "%$this->search%"))
             ->orderBy('order')->get()
             ->groupBy('status');
-    }
+    } 
 
     public function render()
     {
@@ -76,23 +80,27 @@ new class extends Component
 
     <!-- Columns -->
     <div class="flex flex-1 gap-x-1 overflow-hidden">
-        <!-- Todo Column -->
+        <!-- to_do Column -->
         <x-ui.tasks.column>
             <!-- Column header -->
-            <x-ui.tasks.header class="bg-gray-800">A faire</x-tasks.header>
+            <x-ui.tasks.header :board_id="$board->id" status="to_do" class="bg-gray-800">A faire</x-tasks.header>
 
             <!-- Tasks -->
             <x-ui.tasks.container>
-                @foreach ($this->tasks->get('todo', []) as $task)
+                @foreach ($this->tasks->get('to_do', []) as $task)
                     <livewire:task-item :task="$task" :wire:key="$task->id" />
                 @endforeach
             </x-ui.tasks.container>
 
             <!--Tasks empty state -->
-            <x-ui.tasks.empty wire:show="tasks->get('todo')->isNotEmpty()" />
+            <x-ui.tasks.empty wire:show="tasks->get('to_do')->isNotEmpty()" />
 
             <!-- Add task -->
-            <x-ui.button variant="secondary" class="w-full">
+            <x-ui.button 
+                variant="secondary" 
+                class="w-full"
+                @click="$dispatch('open-modal', {type: 'center', component: 'modals.task.create', size: 'sm', props: {board_id: '{{ $board->id }}', status: 'to_do'}})"
+            >
                 <x-lucide-plus class="size-4 text-neutral-500"/>
                 Ajouter
             </x-ui.button>
@@ -101,7 +109,7 @@ new class extends Component
         <!-- In Progress Column -->
         <x-ui.tasks.column>
             <!-- Column header -->
-            <x-ui.tasks.header class="bg-amber-500">En cours</x-tasks.header>
+            <x-ui.tasks.header :board_id="$board->id" status="in_progress" class="bg-amber-500">En cours</x-tasks.header>
 
             <!-- Tasks -->
             <x-ui.tasks.container>
@@ -114,7 +122,12 @@ new class extends Component
             <x-ui.tasks.empty wire:show="tasks->get('in_progress')->isNotEmpty()" />
 
             <!-- Add task -->
-            <x-ui.button variant="secondary" class="w-full">
+            <x-ui.button 
+                variant="secondary" 
+                class="w-full"
+
+                @click="$dispatch('open-modal', {type: 'center', component: 'modals.task.create', size: 'sm', props: {board_id: '{{ $board->id }}', status: 'in_progress'}})"
+            >
                 <x-lucide-plus class="size-4 text-neutral-500"/>
                 Ajouter
             </x-ui.button>
@@ -123,7 +136,7 @@ new class extends Component
         <!-- Done Column -->
         <x-ui.tasks.column>
             <!-- Column header -->
-            <x-ui.tasks.header class="bg-sky-500">Revision</x-tasks.header>
+            <x-ui.tasks.header :board_id="$board->id" status="review" class="bg-sky-500">Revision</x-tasks.header>
 
             <!-- Tasks -->
             <x-ui.tasks.container>
@@ -136,16 +149,21 @@ new class extends Component
             <x-ui.tasks.empty wire:show="tasks->get('review')->isNotEmpty()" />
 
             <!-- Add task -->
-            <x-ui.button variant="secondary" class="w-full">
+            <x-ui.button 
+                variant="secondary" 
+                class="w-full"
+
+                @click="$dispatch('open-modal', {type: 'center', component: 'modals.task.create', size: 'sm', props: {board_id: '{{ $board->id }}', status: 'review'}})"
+            >
                 <x-lucide-plus class="size-4 text-neutral-500"/>
                 Ajouter
             </x-ui.button>
         </x-ui.tasks.column>
         
-        <!-- Todo Column -->
+        <!-- to_do Column -->
         <x-ui.tasks.column>
             <!-- Column header -->
-            <x-ui.tasks.header class="bg-green-500">Fait</x-tasks.header>
+            <x-ui.tasks.header :board_id="$board->id" status="done" class="bg-green-500">Fait</x-tasks.header>
 
             <!-- Tasks -->
             <x-ui.tasks.container>
@@ -158,7 +176,12 @@ new class extends Component
             <x-ui.tasks.empty wire:show="tasks->get('done')->isNotEmpty()" />
 
             <!-- Add task -->
-            <x-ui.button variant="secondary" class="w-full">
+            <x-ui.button 
+                variant="secondary" 
+                class="w-full"
+
+                @click="$dispatch('open-modal', {type: 'center', component: 'modals.task.create', size: 'sm', props: {board_id: '{{ $board->id }}', status: 'done'}})"
+            >
                 <x-lucide-plus class="size-4 text-neutral-500"/>
                 Ajouter
             </x-ui.button>
