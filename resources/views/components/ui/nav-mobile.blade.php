@@ -54,7 +54,10 @@
 
             <!-- Navigation -->
             <div class="space-y-2 flex-1">
-                <x-ui.nav-item href="/dashboard" :active="true">
+                <x-ui.nav-item href="{{ route('board.index') }}" 
+                    :active="request()->routeIs('board.*')"
+                    wire:navigate
+                >
                     <x-slot:icon>
                         <x-lucide-folder class="size-5"/>
                     </x-slot:icon>
@@ -69,7 +72,11 @@
             </div>
             <!-- Footer -->
             <div class="space-y-2">
-                <x-ui.nav-item href="#">
+                <x-ui.nav-item 
+                    href="{{ route('setting.account') }}" 
+                    :active="request()->routeIs('setting.*')"
+                    wire:navigate
+                >
                     <x-slot:icon>
                         <x-lucide-cog class="size-5"/>
                     </x-slot:icon>
