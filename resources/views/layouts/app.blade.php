@@ -21,7 +21,7 @@
 
 
         <!-- Nav desktop -->
-        <nav class="hidden lg:flex bg-neutral-100 w-(--aside-width) h-full p-3.5  flex-col">
+        <nav class="hidden lg:flex bg-neutral-50 w-(--aside-width) h-full p-3.5  flex-col">
             <!-- Logo -->
             <div class="flex items-center gap-x-2 h-13 mb-13">
                 <x-ui.logo />
@@ -45,13 +45,17 @@
             </div>
             <!-- Footer -->
             <div class="space-y-2">
-                <x-ui.nav-item href="#">
+                <x-ui.nav-item 
+                    href="{{ route('setting.account') }}" 
+                    :active="request()->routeIs('setting.*')"
+                    wire:navigate
+                >
                     <x-slot:icon>
                         <x-lucide-cog class="size-5"/>
                     </x-slot:icon>
                     Parametre
                 </x-ui.nav-item>
-                <x-ui.user :name="auth()->user()->name" :avatar="'https://ui-avatars.com/api/?name='.auth()->user()->name"/>
+                <x-ui.user :name="auth()->user()->name" :avatar="'https://ui-avatars.com/api/?name='.auth()->user()->name.'&background=random'"/>
             </div>
         </nav>
         <main class="flex-1 h-full">{{ $slot }}</main>
