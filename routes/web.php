@@ -24,6 +24,7 @@ Route::prefix('board/')->name('board.')->middleware(['auth'])->group(function() 
 # Setting route
 Route::prefix('setting/')->name('setting.')->middleware(['auth'])->group(function() {
     Route::livewire('account','pages::setting.⚡account')->name('account');
+    Route::livewire('password','pages::setting.⚡change-password')->name('password');
 });
 
 Route::get('/email-change/confirm/{token}', ConfirmEmailChangeController::class)
