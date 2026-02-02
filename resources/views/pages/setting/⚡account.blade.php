@@ -43,7 +43,7 @@ new #[Title('Parametre')] class extends Component
                 </x-slot:icon>
                 Compte
             </x-ui.nav-item>
-            <x-ui.nav-item wire:navigate :href="route('setting.account')" wire:navigate>
+            <x-ui.nav-item wire:navigate :href="route('setting.password')" :active="request()->routeIs('setting.password')" wire:navigate>
                 <x-slot:icon>
                     <x-lucide-shield class="size-5"/>
                 </x-slot:icon>
@@ -93,7 +93,3 @@ new #[Title('Parametre')] class extends Component
         </div>
     </div>
 </div>
-
-<script>
-    
-</script>
