@@ -27,6 +27,24 @@ new class extends Component
 };
 ?>
 
+@placeholder
+    <div class="px-3 py-2 flex items-center justify-between border-b border-neutral-200 animate-pulse">
+        <div class="flex items-center gap-x-4.5">
+            <div class="size-8 rounded-lg bg-neutral-200"></div>
+
+            <div class="h-4 w-32 rounded bg-neutral-200"></div>
+        </div>
+
+        <div class="hidden sm:flex items-center gap-x-2">
+            <div class="h-3 w-20 rounded bg-neutral-200"></div>
+
+            <div class="size-8 rounded bg-neutral-200"></div>
+            <div class="size-8 rounded bg-neutral-200"></div>
+        </div>
+    </div>
+
+@endplaceholder
+
 <div class="group odd:bg-white even:bg-gray-50 px-3 py-2 flex items-center justify-between border-b border-neutral-200 relative">
     <div class="flex items-center gap-x-4.5">
         <div class="size-8 font-medium grid place-items-center rounded-lg" style="background-color: {{ $board->color.'26' }}; color: {{ $board->color }}; background-opacity: 0.1;">
