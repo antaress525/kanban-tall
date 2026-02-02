@@ -50,4 +50,8 @@ class User extends Authenticatable
     public function boards(): HasMany {
         return $this->hasMany(Board::class);
     }
+
+    public function emailChanges(): HasMany  {
+        return $this->hasMany(EmailChange::class);
+    }
 }

@@ -77,7 +77,7 @@ new #[Title('Parametre')] class extends Component
                 </div>
                 <div class="flex items-center gap-x-2">
                     <x-ui.input name="change email" value="{{ $email }}" size="md" disabled></x-ui.input>
-                    <x-ui.button size="md">Changer</x-ui.button>
+                    <x-ui.button size="md" @click="$dispatch('open-modal', {type: 'center', component: 'modals.change-email', size: 'xs'})">Changer</x-ui.button>
                 </div>
             </div>
 

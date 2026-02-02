@@ -55,7 +55,7 @@
                     </x-slot:icon>
                     Parametre
                 </x-ui.nav-item>
-                <x-ui.user :name="auth()->user()->name" :avatar="'https://ui-avatars.com/api/?name='.auth()->user()->name"/>
+                <x-ui.user :name="auth()->user()->name" :avatar="'https://ui-avatars.com/api/?name='.auth()->user()->name.'&background=random'"/>
             </div>
         </nav>
         <main class="flex-1 h-full">{{ $slot }}</main>

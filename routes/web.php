@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\ConfirmEmailChangeController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -24,3 +25,7 @@ Route::prefix('board/')->name('board.')->middleware(['auth'])->group(function() 
 Route::prefix('setting/')->name('setting.')->middleware(['auth'])->group(function() {
     Route::livewire('account','pages::setting.⚡account')->name('account');
 });
+
+Route::get('/email-change/confirm/{token}', ConfirmEmailChangeController::class)
+    ->name('email.change.confirm');
+
