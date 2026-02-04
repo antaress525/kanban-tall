@@ -2,33 +2,29 @@
 
 use Livewire\Component;
 use App\Models\Board;
-use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
-use Illuminate\Database\Eloquent\Builder;
 use App\Models\Task;
+use App\Enum\TaskStatuEnum;
 
 new class extends Component
 {
     public Board $board;
     public array $selected = [];
 
+    public array $columns = [];
+
     #[Url(except: '')]
     public string $search = '';
 
-    protected $listeners = [
-        'task-created' => '$refresh'
-    ];
-
     public function mount(Board $board) {
         $this->board = $board->load(['tasks']);
-    }
 
-    #[Computed]
-    public function tasks() {
-        return $this->board->tasks()
-            ->when($this->search, fn(Builder $query) => $query->whereLike('title', "%$this->search%"))
-            ->orderBy('order')->get()
-            ->groupBy('status');
+        $this->columns = [
+            TaskStatuEnum::TODO->value => TaskStatuEnum::TODO->label(),
+            TaskStatuEnum::INPROGRESS->value => TaskStatuEnum::INPROGRESS->label(),
+            TaskStatuEnum::REVIEW->value => TaskStatuEnum::REVIEW->label(),
+            TaskStatuEnum::DONE->value => TaskStatuEnum::DONE->label()
+        ];
     }
 
     public function deleteSelected() {
@@ -87,134 +83,10 @@ new class extends Component
     </div>
 
     <!-- Columns -->
-    <div class="flex flex-1 gap-x-1 overflow-hidden">
-        <!-- to_do Column -->
-        <x-ui.tasks.column>
-            <!-- Column header -->
-            <x-ui.tasks.header 
-                :board_id="$board->id" 
-                status="to_do" class="bg-gray-800"
-            >
-                A faire
-            </x-tasks.header>
-
-            <!-- Tasks -->
-            <x-ui.tasks.container>
-                @foreach ($this->tasks->get('to_do', []) as $task)
-                    <livewire:task-item :task="$task" :wire:key="$task->id">
-                        <livewire:slot name="checkbox">
-                            <x-ui.checkbox :value="$task->id" wire:model="selected" /> 
-                        </livewire:slot>
-                    </livewire:task-item>
-                @endforeach
-            </x-ui.tasks.container>
-
-            <!--Tasks empty state -->
-            <x-ui.tasks.empty wire:show="tasks->get('to_do')->isNotEmpty()" />
-
-            <!-- Add task -->
-            <x-ui.button 
-                variant="secondary" 
-                class="w-full"
-                @click="$dispatch('open-modal', {type: 'center', component: 'modals.task.create', size: 'sm', props: {board_id: '{{ $board->id }}', status: 'to_do'}})"
-            >
-                <x-lucide-plus class="size-4 text-neutral-500"/>
-                Ajouter
-            </x-ui.button>
-        </x-ui.tasks.column>
-
-        <!-- In Progress Column -->
-        <x-ui.tasks.column>
-            <!-- Column header -->
-            <x-ui.tasks.header :board_id="$board->id" status="in_progress" class="bg-amber-500">En cours</x-tasks.header>
-
-            <!-- Tasks -->
-            <x-ui.tasks.container>
-                @foreach ($this->tasks->get('in_progress', []) as $task)
-                    <livewire:task-item :task="$task" :wire:key="$task->id">
-                        <livewire:slot name="checkbox">
-                            <x-ui.checkbox :value="$task->id" wire:model="selected" /> 
-                        </livewire:slot>
-                    </livewire:task-item>
-                @endforeach
-            </x-ui.tasks.container>
-
-            <!--Tasks empty state -->
-            <x-ui.tasks.empty wire:show="tasks->get('in_progress')->isNotEmpty()" />
-
-            <!-- Add task -->
-            <x-ui.button 
-                variant="secondary" 
-                class="w-full"
-
-                @click="$dispatch('open-modal', {type: 'center', component: 'modals.task.create', size: 'sm', props: {board_id: '{{ $board->id }}', status: 'in_progress'}})"
-            >
-                <x-lucide-plus class="size-4 text-neutral-500"/>
-                Ajouter
-            </x-ui.button>
-        </x-ui.tasks.column>
-
-        <!-- Done Column -->
-        <x-ui.tasks.column>
-            <!-- Column header -->
-            <x-ui.tasks.header :board_id="$board->id" status="review" class="bg-sky-500">Revision</x-tasks.header>
-
-            <!-- Tasks -->
-            <x-ui.tasks.container>
-                @foreach ($this->tasks->get('review', []) as $task)
-                     <livewire:task-item :task="$task" :wire:key="$task->id">
-                        <livewire:slot name="checkbox">
-                            <x-ui.checkbox :value="$task->id" wire:model="selected" /> 
-                        </livewire:slot>
-                    </livewire:task-item>
-                @endforeach
-            </x-ui.tasks.container>
-            
-            <!--Tasks empty state -->
-            <x-ui.tasks.empty wire:show="tasks->get('review')->isNotEmpty()" />
-
-            <!-- Add task -->
-            <x-ui.button 
-                variant="secondary" 
-                class="w-full"
-
-                @click="$dispatch('open-modal', {type: 'center', component: 'modals.task.create', size: 'sm', props: {board_id: '{{ $board->id }}', status: 'review'}})"
-            >
-                <x-lucide-plus class="size-4 text-neutral-500"/>
-                Ajouter
-            </x-ui.button>
-        </x-ui.tasks.column>
-        
-        <!-- to_do Column -->
-        <x-ui.tasks.column>
-            <!-- Column header -->
-            <x-ui.tasks.header :board_id="$board->id" status="done" class="bg-green-500">Fait</x-tasks.header>
-
-            <!-- Tasks -->
-            <x-ui.tasks.container>
-                @foreach ($this->tasks->get('done', []) as $task)
-                     <livewire:task-item :task="$task" :wire:key="$task->id">
-                        <livewire:slot name="checkbox">
-                            <x-ui.checkbox :value="$task->id" wire:model="selected" /> 
-                        </livewire:slot>
-                    </livewire:task-item>
-                @endforeach
-            </x-ui.tasks.container>
-
-            <!--Tasks empty state -->
-            <x-ui.tasks.empty wire:show="tasks->get('done')->isNotEmpty()" />
-
-            <!-- Add task -->
-            <x-ui.button 
-                variant="secondary" 
-                class="w-full"
-
-                @click="$dispatch('open-modal', {type: 'center', component: 'modals.task.create', size: 'sm', props: {board_id: '{{ $board->id }}', status: 'done'}})"
-            >
-                <x-lucide-plus class="size-4 text-neutral-500"/>
-                Ajouter
-            </x-ui.button>
-        </x-ui.tasks.column>
+    <div class="flex flex-1 gap-x-2 overflow-hidden">
+        @foreach ($columns as $status => $title)
+            <livewire:kanban.column :title="$title" :status="$status" :board="$board" />
+        @endforeach 
     </div>
 
     <!-- Delete selected -->
