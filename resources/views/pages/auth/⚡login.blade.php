@@ -20,6 +20,10 @@ new #[Layout('layouts::guest'), Title('Se connecter')] class extends Component
             return;
         }
 
+        if ($token = session()->pull('invitation_token')) {
+            return redirect()->route('boards.invitations.accept', $token);
+        }
+
         session()->regenerate();
         return $this->redirectIntended('/', true);
     }

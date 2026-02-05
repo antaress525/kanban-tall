@@ -21,7 +21,13 @@ class BoardPolicy
      */
     public function view(User $user, Board $board): bool
     {
-        return $user->id === $board->user_id;
+        if ($board->user_id === $user->id) {
+            return true;
+        }
+        if($board->members()->where('user_id', $user->id)->exists()) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -62,5 +68,10 @@ class BoardPolicy
     public function forceDelete(User $user, Board $board): bool
     {
         return false;
+    }
+
+    public function invite(User $user, Board $board): bool
+    {
+        return $user->id === $board->user_id;
     }
 }

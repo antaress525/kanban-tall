@@ -1,6 +1,9 @@
 <?php
 
+use App\Models\Invitation;
+use Illuminate\Validation\Rules\In;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AcceptBoardInvitationController;
 use App\Http\Controllers\Auth\ConfirmEmailChangeController;
 
 // Route::get('/', function () {
@@ -29,4 +32,6 @@ Route::prefix('setting/')->name('setting.')->middleware(['auth'])->group(functio
 
 Route::get('/email-change/confirm/{token}', ConfirmEmailChangeController::class)
     ->name('email.change.confirm');
+
+Route::get('/boards/invitations/accept/{token}', AcceptBoardInvitationController::class)->name('board.invitations.accept');
 

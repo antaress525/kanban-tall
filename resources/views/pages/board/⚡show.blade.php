@@ -57,10 +57,18 @@ new class extends Component
             <h3 class="text-lg sm:hidden sm:text-xl truncate font-medium">{{ Str::limit(Str::ucfirst($board->name), 9) }}</h3>
         </div>
         <div class="flex items-center gap-x-2">
-            <x-ui.button variant="secondary" size="md" class="font-medium">
-                <x-lucide-user-plus class="size-4 text-neutral-500"/>
-                Inviter
-            </x-ui.button>
+            @can('invite', $board)
+                <x-ui.button 
+                    @click="$dispatch('open-modal', {type: 'center', component: 'modals.invite-user', size: 'xl', props: {board_id: '{{ $board->id }}' } })"
+                    variant="secondary" 
+                    size="md" 
+                    class="font-medium"
+                >
+                    <x-lucide-user-plus class="size-4 text-neutral-500"/>
+                    Inviter
+                </x-ui.button>
+            @endcan
+            
             <x-ui.button variant="secondary" size="md" class="font-medium">
                 <x-lucide-settings class="size-4 text-neutral-500"/>
                 Parametre
@@ -70,7 +78,11 @@ new class extends Component
 
     <!-- Board action -->
     <div class="flex items-center gap-x-2 justify-end mb-6">
-        <x-ui.button variant="secondary" size="md" class="font-medium">
+        <x-ui.button 
+            variant="secondary" 
+            size="md" 
+            class="font-medium"
+        >
             <x-lucide-sliders-horizontal class="size-4 text-neutral-500"/>
             Filtre
         </x-ui.button>

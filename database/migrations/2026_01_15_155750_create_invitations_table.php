@@ -13,11 +13,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('invitations', function (Blueprint $table) {
-             $table->id();
-            $table->string('status');
-            $table->foreignIdFor(User::class, 'sender_id')->constrained()->cascadeOnDelete();
-            $table->foreignIdFor(User::class, 'recipient_id')->constrained()->cascadeOnDelete();
+            $table->id();
+            $table->unsignedBigInteger('invited_by');
+            $table->string('email');
+            $table->timestamp('accepted_at')->nullable();
+            $table->uuid('token')->unique();
+            $table->string('status')->default('pending');
             $table->foreignUuid('board_id')->constrained('boards')->cascadeOnDelete();
+            $table->timestamp('expires_at')->nullable()->index();
+            $table->foreign('invited_by')->references('id')
+                ->on('users')
+                ->cascadeOnDelete();
             $table->timestamps();
         });
     }
