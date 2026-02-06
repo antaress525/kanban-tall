@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
@@ -53,5 +54,17 @@ class User extends Authenticatable
 
     public function emailChanges(): HasMany  {
         return $this->hasMany(EmailChange::class);
+    }
+
+    public function collaborativeBoards(): BelongsToMany {
+        return $this->belongsToMany(Board::class);
+
+    }
+
+    public function getAvatarUrl(): string {
+        if ($this->avatar) {
+            return asset('storage/avatars/'.$this->avatar);
+        }
+        return 'https://ui-avatars.com/api/?size=30&name='.urlencode($this->name).'&background=random&format=svg';
     }
 }
