@@ -60,4 +60,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Board::class);
 
     }
+
+    public function getAvatarUrl(): string {
+        if ($this->avatar) {
+            return asset('storage/avatars/'.$this->avatar);
+        }
+        return 'https://ui-avatars.com/api/?size=30&name='.urlencode($this->name).'&background=random&format=svg';
+    }
 }

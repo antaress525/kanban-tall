@@ -54,13 +54,14 @@ new class extends Component
             <h3 class="text-lg sm:hidden sm:text-xl truncate font-medium">{{ Str::limit(Str::ucfirst($board->name), 9) }}</h3>
         </div>
         <div class="flex items-center gap-x-2">
-            <div class="flex items-center justify-center">
-                @foreach ($board->members as $member)
-                    <div class="size-8.5 -ml-1.5 grid place-items-center text-indigo-500 border-2 border-white rounded-lg bg-indigo-50" title="{{ $member->name }}">
-                        <span class="text-xs font-medium">{{ strtoupper(substr($member->name, 0, 2)) }}</span>
-                    </div>
+            <x-ui.avatar-group>
+                @foreach ($board->members()->limit(3)->get() as $member)
+                    <img src="{{ $member->getAvatarUrl() }}" class="border-2 border-white rounded-lg" alt="">
                 @endforeach
-            </div>
+                @if ($board->members()->count() > 3)
+                    <x-ui.avatar-group-count count="{{ $board->members()->count() - 3 }}" />
+                @endif
+            </x-ui.avatar-group>
             @can('invite', $board)
                 <div class="hidden sm:block">
                     <x-ui.button 
