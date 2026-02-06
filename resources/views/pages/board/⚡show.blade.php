@@ -2,9 +2,9 @@
 
 use Livewire\Component;
 use App\Models\Board;
-use Livewire\Attributes\Url;
 use App\Models\Task;
 use App\Enum\TaskStatuEnum;
+use Livewire\Attributes\Computed;
 
 new class extends Component
 {
@@ -13,11 +13,8 @@ new class extends Component
 
     public array $columns = [];
 
-    #[Url(except: '')]
-    public string $search = '';
-
     public function mount(Board $board) {
-        $this->board = $board->load(['tasks']);
+        $this->board = $board->load(['tasks', 'members']);
 
         $this->columns = [
             TaskStatuEnum::TODO->value => TaskStatuEnum::TODO->label(),
@@ -57,22 +54,41 @@ new class extends Component
             <h3 class="text-lg sm:hidden sm:text-xl truncate font-medium">{{ Str::limit(Str::ucfirst($board->name), 9) }}</h3>
         </div>
         <div class="flex items-center gap-x-2">
+            <div class="flex items-center justify-center">
+                @foreach ($board->members as $member)
+                    <div class="size-8.5 -ml-1.5 grid place-items-center text-indigo-500 border-2 border-white rounded-lg bg-indigo-50" title="{{ $member->name }}">
+                        <span class="text-xs font-medium">{{ strtoupper(substr($member->name, 0, 2)) }}</span>
+                    </div>
+                @endforeach
+            </div>
             @can('invite', $board)
-                <x-ui.button 
-                    @click="$dispatch('open-modal', {type: 'center', component: 'modals.invite-user', size: 'xl', props: {board_id: '{{ $board->id }}' } })"
-                    variant="secondary" 
-                    size="md" 
-                    class="font-medium"
-                >
-                    <x-lucide-user-plus class="size-4 text-neutral-500"/>
-                    Inviter
-                </x-ui.button>
+                <div class="hidden sm:block">
+                    <x-ui.button 
+                        @click="$dispatch('open-modal', {type: 'center', component: 'modals.invite-user', size: 'xl', props: {board_id: '{{ $board->id }}' } })"
+                        variant="secondary" 
+                        size="md" 
+                        class="font-medium"
+                    >
+                        <x-lucide-user-plus class="size-4 text-neutral-500"/>
+                        Inviter
+                    </x-ui.button>
+                </div>
             @endcan
             
-            <x-ui.button variant="secondary" size="md" class="font-medium">
+            <div class="hidden sm:block">
+                <x-ui.button variant="secondary" size="md" class="font-medium">
+                    <x-lucide-settings class="size-4 text-neutral-500"/>
+                    Parametre
+                </x-ui.button>
+            </div>
+
+            <!-- Mobile button -->
+            <x-ui.icon-button size="md" class="sm:hidden">
                 <x-lucide-settings class="size-4 text-neutral-500"/>
-                Parametre
-            </x-ui.button>
+            </x-ui.icon-button>
+            <x-ui.icon-button size="md" class="sm:hidden">
+                <x-lucide-user-plus class="size-4 text-neutral-500"/>
+            </x-ui.icon-button>
         </div>
     </div>
 
@@ -86,10 +102,9 @@ new class extends Component
             <x-lucide-sliders-horizontal class="size-4 text-neutral-500"/>
             Filtre
         </x-ui.button>
-        <x-ui.input name="search" wire:model.live.debounce.500ms="search" size="md" class="w-full sm:w-3xs" placeholder="Recherche">
+        <x-ui.input name="search" size="md" class="w-full sm:w-3xs" placeholder="Recherche">
             <x-slot:prefix>
-                <x-ui.spinner wire:loading wire:target="search" class="size-4" />
-                <x-lucide-search wire:loading.remove wire:target="search" class="size-4 text-neutral-500"/>
+                <x-lucide-search class="size-4 text-neutral-500"/>
             </x-slot:prefix>
         </x-ui.input>
     </div>

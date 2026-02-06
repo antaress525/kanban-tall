@@ -1,7 +1,7 @@
 @props(['user'])
 
 @php
-    $classes = 'group flex items-center gap-x-3 px-2.5 py-1.5 rounded-lg hover:bg-neutral-100';
+    $classes = 'group flex items-center gap-x-3 px-2.5 py-1.5 rounded-lg hover:bg-neutral-100 invited-user';
 @endphp
 
 <div {{ $attributes->merge(['class' => $classes]) }}>
@@ -16,7 +16,8 @@
             </p>
         </div>
         <button wire:click="invite('{{ $user->email }}')" class="group-hover:opacity-100 opacity-0 cursor-pointer size-8 rounded-full grid place-items-center bg-white border border-neutral-200 drop-shadow-xs">
-            <x-lucide-send-horizontal class="size-4.5 text-neutral-500" />
+            <x-ui.spinner class="not-in-data-loading:hidden size-4.5 fill-neutral-400" />
+            <x-lucide-send-horizontal class="in-data-loading:hidden size-4 text-neutral-500" />
         </button>
     </div>
 </div>

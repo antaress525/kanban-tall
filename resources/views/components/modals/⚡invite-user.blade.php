@@ -7,6 +7,7 @@ use App\Models\Board;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\BoardInvitationMail;
+use Livewire\Attributes\Renderless;
 
 new class extends Component
 {
@@ -51,14 +52,14 @@ new class extends Component
         return User::where('email', $email)->exists();
     }
 
+    #[Renderless]
     public function invite(string $email) {
-
-        // dd($email);
         $emailExists = $this->isEmailExists($email);
         $authEmail = $this->isAuthEmail($email);
 
         if (!$emailExists) {
             // $this->error = "L'utilisateur avec cet email n'existe pas.";
+            $this->dispatch('notify', message: 'error', message: "L'utilisateur avec cet email n'existe pas.");
             return;
         }
         if ($authEmail) {
@@ -82,6 +83,7 @@ new class extends Component
         ]);
 
         Mail::to($email)->send(new BoardInvitationMail( $invitation) );
+        $this->dispatch('notify', type: 'success', message: "L'invitation a ete envoyer");
 
         $this->reset('search');
     }
@@ -102,7 +104,6 @@ new class extends Component
                 placeholder="Rechercher un utilisateur par email" 
                 name="search-user"
                 wire:model.live.debounce.500ms="search"
-                autofocus
             >
                 <x-slot:prefix>
                     <x-lucide-search wire:loading.remove wire:target="search" class="size-4 text-neutral-500"/>
@@ -120,7 +121,7 @@ new class extends Component
             <div class="space-y-3">
                 <!-- Example of an invited user -->
                 @forelse ($this->users as $user)
-                    <x-ui.invited-user class="mr-2.5" :user="$user" />
+                    <x-ui.invited-user wire:key="{{ $user->id }}" class="mr-2.5" :user="$user" />
                 @empty
                     <div>
                         <p class="text-sm text-neutral-500 text-center">Aucun utilisateur trouvé</p>
@@ -131,10 +132,26 @@ new class extends Component
     </div>
 
     <!-- Spacer -->
-    <div class="bg-neutral-100 rounded-lg flex-1 p-2">
+    <div class="bg-neutral-100 rounded-lg flex-1 p-2 flex flex-col">
         <div>
             <h2 class="font-medium">Invités actuels</h2>
             <p class="text-neutral-400 text-sm">Consultez et gérez les membres déjà ajoutés au tableau.</p>
         </div>
+
+        <!-- Pedding Invitations List -->
+        <div class="space-y-1 mt-8 flex-1 overflow-y-auto">
+            @foreach ($board->invitations()->where('status', 'pending')->get() as $invitation)
+                <div class="flex items-end gap-x-2 px-2.5 py-1.5 rounded-lg bg-neutral-100">
+                    <div class="size-8.5 rounded-lg bg-yellow-500/10 grid place-items-center">
+                        <x-lucide-mail class="size-4.5 text-yellow-500" />
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium">{{ $invitation->email }}</p>
+                        <p class="text-xs text-neutral-500 font-medium">Invité le {{ $invitation->created_at->format('d M Y') }}</p>
+                    </div>
+                </div>
+            @endforeach
+        </div>
     </div>
 </div>
+
