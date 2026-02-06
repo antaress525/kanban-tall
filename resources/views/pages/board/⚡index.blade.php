@@ -26,6 +26,7 @@ new #[Title('Mes tableau')] class extends Component
             ->when($this->search, function(Builder $query, string $search) {
                 return $query->whereLike('name', "%$search%");
             })
+            ->latest()
             ->paginate(5);
     }
 
