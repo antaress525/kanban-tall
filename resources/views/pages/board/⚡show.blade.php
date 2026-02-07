@@ -110,13 +110,25 @@ new class extends Component
         </x-ui.input>
     </div>
 
-    <!-- Columns -->
-    <div class="flex flex-1 gap-x-2 overflow-hidden">
+    <!-- Columns desktop-->
+    <div class="flex-1 gap-x-2 hidden xl:flex">
         @foreach ($columns as $status => $title)
             <livewire:kanban.column :title="$title" :status="$status" :board="$board" />
         @endforeach 
     </div>
 
+
+    <!-- Columns mobile -->
+    <div class="embla xl:hidden" >
+        <div class="embla__viewport overflow-hidden">
+            <div class="flex flex-1 gap-x-2 .embla__container">
+                @foreach ($columns as $status => $title)
+                    <livewire:kanban.column :title="$title" :status="$status" :board="$board" />
+                @endforeach 
+            </div>
+        </div>
+    </div>
+    
     <!-- Delete selected -->
     <div 
         x-show="$wire.selected.length > 0"
