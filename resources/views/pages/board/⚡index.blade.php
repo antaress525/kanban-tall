@@ -3,6 +3,7 @@
 use Livewire\Component;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\Computed;
 use Livewire\WithPagination;
 use Illuminate\Database\Eloquent\Builder;
@@ -15,18 +16,35 @@ new #[Title('Mes tableau')] class extends Component
     #[Url(except: '', as: 'q')]
     public string $search = '';
 
+    #[Locked, Url(as: 'tab')]
+    public string $activeTab = 'my_board';
+    protected array $allowTab = ['my_board', 'collab_board'];
+
+    public function setActiveTab(string $tab) {
+        if(in_array($tab, $this->allowTab)) {
+            $this->activeTab = $tab;
+        } else{
+            $this->reset('activeTab');
+        }
+    }
+
     protected $listeners = [
         'board-created' => '$refresh',
     ];
 
     #[Computed]
     public function boards() {
+        if($this->activeTab === 'my_board') {
+            return auth()->user()
+                ->boards()
+                ->when($this->search, function(Builder $query, string $search) {
+                    return $query->whereLike('name', "%$search%");
+                })
+                ->latest()
+                ->paginate(5);
+        }
         return auth()->user()
-            ->boards()
-            ->when($this->search, function(Builder $query, string $search) {
-                return $query->whereLike('name', "%$search%");
-            })
-            ->latest()
+            ->collaborativeBoards()
             ->paginate(5);
     }
 
@@ -46,7 +64,7 @@ new #[Title('Mes tableau')] class extends Component
     </div>
 
     <!-- Search -->
-    <div class="mb-9 sm:mb-14 flex items-center gap-x-2">
+    <div class="mb-4 sm:mb-8 flex items-center gap-x-2">
         <x-ui.input name="searh" wire:model.live.debounce.500ms="search" size="md" placeholder="Recherche">
             <x-slot:prefix>
                 <x-ui.spinner wire:loading wire:target="search" class="size-4" />
@@ -59,27 +77,31 @@ new #[Title('Mes tableau')] class extends Component
         </x-ui.button>
     </div>
 
-    <!-- Boards -->
-    <div class="space-y-4 sm:space-y-6 md:space-y-8">
-        @if ($this->boards->isNotEmpty())
-            <div>
-                @foreach ($this->boards as $board)
-                    <livewire:board-item :wire:key="$board->id" :board="$board" @board-deleted="$refresh" lazy />
-                @endforeach
-            </div>
-            <div>
-                {{ $this->boards->links() }}
-            </div>
-        @else
-            <!-- Empty state -->
-            <div class="text-center py-10">
-                <div class="p-3.5 mx-auto mb-4 md:mb-6 border border-neutral-200 rounded-xl grid place-items-center shadow-xl w-max">
-                    <x-lucide-folder class="size-6" />
-                </div>
-                <h3 class="font-medium">Votre espace de travail est vide</h3>
-                <p class="text-neutral-500 mt-1 text-sm text-pretty">Commencez dès maintenant en créant un projet et transformez vos <br class="hidden sm:block"/> idées en actions concrètes.</p>
-                <x-ui.button size="md" class="mt-6 font-medium">Commercer un projet</x-ui.button>
-            </div>
-        @endif
+    <!-- Tabs -->
+    @php
+        $classes = 'border-b-2 border-indigo-500 bg-indigo-500/5 text-indigo-500'
+    @endphp
+
+    <div class="h-12 flex items-center border-b border-neutral-100 mb-6 sm:mb-12 w-full text-black text-sm font-medium">
+        <button 
+            class="flex-1 h-full flex items-center justify-center cursor-pointer {{ $activeTab === 'my_board' ? $classes : '' }}"
+            wire:click="setActiveTab('my_board')"
+        >
+            Mes tableaux
+        </button>
+        <button 
+            class="flex-1 h-full flex items-center justify-center cursor-pointer {{ $activeTab === 'collab_board'? $classes : '' }}"
+            wire:click="setActiveTab('collab_board')"
+        >
+            Mes collaborations
+        </button>
     </div>
+
+    <!-- Boards -->
+    @if ($activeTab === 'collab_board')
+        @include('pages.board.partials.collaborative-board')
+    @else
+        @include('pages.board.partials.my-board')
+    @endif
+    
 </div>
