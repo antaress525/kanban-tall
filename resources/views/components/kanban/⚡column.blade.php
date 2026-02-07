@@ -33,17 +33,21 @@ new class extends Component
 };
 ?>
 
-<div class ="min-w-full sm:min-w-[280px] md:min-w-[256px] flex flex-col gap-y-6 embla__slide">
+<x-ui.kanban.column class="{{ $status }}">
     <!-- Heading -->
-    <x-ui.kanban.header 
-        :board_id="$board->id" 
-        :status="$status" 
+    <x-ui.kanban.header
+        :board_id="$board->id"
+        :status="$status"
         class="bg-zinc-50 shadow-xs border border-neutral-200 text-black"
         :title="$title"
+        :count="$this->tasks->count()"
     />
 
     <!-- Tasks -->
-    <x-ui.kanban.container wire:sort="moveTask"  wire:sort:group="columns">
+    <x-ui.kanban.container
+        wire:sort="moveTask"
+        wire:sort:group="columns"
+    >
         @foreach ($this->tasks as $task)
             <livewire:kanban.item :task="$task" :wire:key="$task->id" wire:sort:item="{{ $task->id }}">
                 <livewire:slot name="checkbox">
@@ -62,4 +66,28 @@ new class extends Component
         <x-lucide-plus class="size-4 text-neutral-500"/>
         Ajouter
     </x-ui.button>
-</div>
+</x-ui.kanban.column>
+
+<script>
+    const status = [
+        'to_do',
+        'in_progress',
+        'review',
+        'done'
+    ]
+    const updateShowCount = (el) => {
+        const showCount = el.querySelector('.task__count')
+        let count = Array.from(el.querySelectorAll('.task')).length
+        if(!count) {
+            count = ''
+        }
+        showCount.innerText = count
+    }
+    this.intercept('moveTask', ({ onSuccess }) => {
+        onSuccess(() => {
+            status.forEach((statu) => {
+                updateShowCount(document.querySelector(`.${statu}`))
+            })
+        })
+    })
+</script>
