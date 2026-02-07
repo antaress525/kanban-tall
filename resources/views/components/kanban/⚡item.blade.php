@@ -13,7 +13,7 @@ new class extends Component
 };
 ?>
 
-<div {{ $attributes->merge(['class' => 'bg-white border border-neutral-200 rounded p-2 cursor-pointer']) }}>
+<div {{ $attributes->merge(['class' => 'bg-white border border-neutral-200 rounded p-2 cursor-pointer task']) }}>
     <div class="flex items-center gap-x-2">
         @if ($slot->has('checkbox'))
             {{ $slot['checkbox'] }}
