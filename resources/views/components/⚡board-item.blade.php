@@ -59,6 +59,7 @@ new class extends Component
 
         <!-- Edit -->
         <x-ui.icon-button 
+            size="sm"
             class="data-loading:bg-neutral-50 hidden group-hover:grid" 
             @click="$dispatch('open-modal', {type: 'center', component: 'modals.update-board', size: 'xs', props: { board_id: '{{ $board->id }}' }})" 
             title="Modifier"
@@ -68,7 +69,7 @@ new class extends Component
         </x-ui.icon-button>
 
         <!-- Delete -->
-        <x-ui.icon-button class="data-loading:bg-neutral-50 hidden group-hover:grid" wire:click="delete" title="Supprimer">
+        <x-ui.icon-button size="sm" class="data-loading:bg-neutral-50 hidden group-hover:grid" wire:click="delete" title="Supprimer">
             <x-lucide-trash class="size-4 text-neutral-400 in-data-loading:hidden" />
             <x-ui.spinner class="size-4 fill-neutral-400 not-in-data-loading:hidden" />
         </x-ui.icon-button>
@@ -80,14 +81,15 @@ new class extends Component
         <x-ui.icon-button 
             class="data-loading:bg-neutral-50" 
             @click="$dispatch('open-modal', {type: 'center', component: 'modals.update-board', size: 'xs', props: { board_id: '{{ $board->id }}' }})"
-            title="Supprimer"
+            title="Modifier"
+            size="sm"
         >
             <x-lucide-pencil class="size-4 text-neutral-400 in-data-loading:hidden" />
             <x-ui.spinner class="size-4 fill-neutral-400 not-in-data-loading:hidden" />
         </x-ui.icon-button>
 
         <!-- Delete -->
-        <x-ui.icon-button class="data-loading:bg-neutral-50" wire:click="delete" title="Supprimer">
+        <x-ui.icon-button size="sm" class="data-loading:bg-neutral-50" wire:click="delete" title="Supprimer">
             <x-lucide-trash class="size-4 text-neutral-400 in-data-loading:hidden" />
             <x-ui.spinner class="size-4 fill-neutral-400 not-in-data-loading:hidden" />
         </x-ui.icon-button>

@@ -33,7 +33,7 @@ new class extends Component
 };
 ?>
 
-<div class ="flex-1 flex flex-col gap-y-6">
+<div class ="min-w-full sm:min-w-[280px] md:min-w-[256px] flex flex-col gap-y-6 embla__slide">
     <!-- Heading -->
     <x-ui.kanban.header 
         :board_id="$board->id" 

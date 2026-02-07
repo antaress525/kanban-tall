@@ -6,7 +6,8 @@
     $sizeClasses = [
         'default' => 'size-9',
         'md' => 'size-8',
-    ][$size] ?? 'h-9';
+        'sm' => 'size-7',
+    ][$size] ?? 'size-9';
 
     // $focusClasses = 'focus-visible:ring-1 focus-visible:ring-indigo-500';
 
