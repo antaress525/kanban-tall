@@ -12,6 +12,7 @@ class Task extends Model
         'title',
         'status',
         'order',
+        'description',
     ];
     protected function casts(): array
     {

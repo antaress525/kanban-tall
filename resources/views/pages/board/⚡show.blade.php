@@ -33,13 +33,13 @@ new class extends Component
     public function render()
     {
         return $this->view()
-            ->title($this->board->name); 
+            ->title($this->board->name);
     }
 };
 ?>
 
 <div class="p-3.5 flex flex-col h-full">
-    <!-- Board Header -->   
+    <!-- Board Header -->
     <div class="flex items-center justify-between mb-4">
         <div class="flex items-center gap-x-3">
             <div 
@@ -156,4 +156,6 @@ new class extends Component
             </button>
         </div>
     </div>
+
+    {{-- <livewire:modals.update-task /> --}}
 </div>
