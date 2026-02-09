@@ -12,12 +12,21 @@ new class extends Component
     public string $title = '';
     public string $status = '';
     public Board $board;
+    public string $search = '';
 
     #[Computed]
     public function tasks() {
         return $this->board->tasks()->where('status', $this->status)
+            ->when($this->search, function($query) {
+                $query->whereLike('title', '%'.$this->search.'%');
+            })
             ->orderBy('order', 'asc')
             ->get();
+    }
+
+    #[On('search-task')]
+    public function searchTask(string $search) {
+        $this->search = trim($search);
     }
 
     #[On('task-created')]
