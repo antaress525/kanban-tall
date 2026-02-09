@@ -5,13 +5,16 @@ use App\Models\Board;
 use App\Models\Task;
 use App\Enum\TaskStatuEnum;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Url;
 
 new class extends Component
 {
     public Board $board;
-    public array $selected = [];
 
     public array $columns = [];
+
+    #[Url(as: 'q', except: '')]
+    public string $search = '';
 
     public function mount(Board $board) {
         $this->board = $board->load(['tasks', 'members']);
@@ -24,10 +27,9 @@ new class extends Component
         ];
     }
 
-    public function deleteSelected() {
-        Task::destroy($this->selected);
-        $this->reset('selected');
-        $this->dispatch('notify', type: 'success', message: 'Les taches on bien ete supprimer');
+    public function updatedSearch(string $value) {
+        $this->dispatch('search-task', search: $value)
+            ->component('kanban.column');
     }
 
     public function render()
@@ -103,9 +105,10 @@ new class extends Component
             <x-lucide-sliders-horizontal class="size-4 text-neutral-500"/>
             Filtre
         </x-ui.button>
-        <x-ui.input name="search" size="md" class="w-full sm:w-3xs" placeholder="Recherche">
+        <x-ui.input wire:model.live.debounce.500ms="search" name="search" size="md" class="w-full sm:w-3xs" placeholder="Recherche">
             <x-slot:prefix>
-                <x-lucide-search class="size-4 text-neutral-500"/>
+                <x-ui.spinner class="size-4 fill-neutral-400" wire:loading />
+                <x-lucide-search class="size-4 text-neutral-500" wire:loading.remove />
             </x-slot:prefix>
         </x-ui.input>
     </div>
