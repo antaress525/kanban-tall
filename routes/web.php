@@ -3,6 +3,7 @@
 use App\Models\Invitation;
 use Illuminate\Validation\Rules\In;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\AcceptBoardInvitationController;
 use App\Http\Controllers\Auth\ConfirmEmailChangeController;
 
@@ -15,6 +16,11 @@ Route::livewire('/', 'pages::home')->name('dashboard');
 Route::prefix('/')->name('auth.')->middleware(['guest'])->group(function() {
     Route::livewire('login', 'pages::auth.⚡login')->name('login');
     Route::livewire('register', 'pages::auth.⚡register')->name('register');
+
+    Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])
+        ->name('google');
+
+    Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback']);
 });
 
 # Board route

@@ -27,7 +27,7 @@ new #[Layout('layouts::guest'), Title('S\'inscrire')] class extends Component
 };
 ?>
 
-<form wire:submit.prevent="register" class="flex flex-col justify-center bg-white border border-neutral-200 rounded-lg w-sm p-6 space-y-4">
+<form wire:submit.prevent="register" class="flex flex-col justify-center bg-white border border-neutral-200 rounded-lg w-sm p-6 space-y-6">
      <x-ui.field>
         <x-ui.label>Nom</x-ui.label>
         <x-ui.input type="text" wire:model="form.name" name="name" placeholder="Votre nom" required autofocus />
@@ -53,9 +53,9 @@ new #[Layout('layouts::guest'), Title('S\'inscrire')] class extends Component
         <x-ui.spinner class="not-in-data-loading:hidden size-4.5 fill-white" />
         Accéder à Kanban App
     </x-ui.button>
+    @include('pages.auth.partials.google-auth')
     <span class="text-center text-sm text-neutral-400">
         Vous avez deja un compte?
         <x-ui.link class="text-black" href="{{ route('auth.login') }}" wire:navigate>Se connecter</x-ui.link>
     </span>
-    
 </form>
