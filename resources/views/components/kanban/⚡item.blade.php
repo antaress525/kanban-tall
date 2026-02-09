@@ -2,6 +2,7 @@
 
 use Livewire\Component;
 use App\Models\Task;
+use Livewire\Attributes\On;
 
 new class extends Component
 {
@@ -10,10 +11,18 @@ new class extends Component
     public function mount($task) {
         $this->task = $task;
     }
+
+    #[On('task-updated.{task.id}')]
+    public function refreshItem() {
+        $this->task->refresh();
+    }
 };
 ?>
 
-<div {{ $attributes->merge(['class' => 'bg-white border border-neutral-200 rounded p-2 cursor-pointer task']) }}>
+<div
+    {{ $attributes->merge(['class' => 'bg-white border border-neutral-200 rounded p-2 cursor-pointer task']) }}
+    @click="$dispatch('open-modal', {type: 'drawer', size: 'sm', component: 'modals.task.update', props: {task_id: '{{ $task->id }}'}})"
+>
     <div class="flex items-center gap-x-2">
         @if ($slot->has('checkbox'))
             {{ $slot['checkbox'] }}
