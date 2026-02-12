@@ -14,11 +14,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('task_user', function (Blueprint $table) {
-            $table->id();
-            $table->string('comment', '1000');
             $table->foreignIdFor(Task::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
-            $table->timestamps();
+            $table->dateTime('create_at')->nullable();
         });
     }
 

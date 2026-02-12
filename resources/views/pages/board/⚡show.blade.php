@@ -131,34 +131,4 @@ new class extends Component
             </div>
         </div>
     </div>
-    
-    <!-- Delete selected -->
-    <div 
-        x-show="$wire.selected.length > 0"
-        x-transition
-        x-cloak
-        class="fixed bottom-3.5 left-0 right-0 flex items-center justify-center gap-x-3.5"
-    >
-        <!-- Count -->
-        <span class="size-8 rounded-full text-white text-sm font-medium bg-black grid place-items-center" x-text="$wire.selected.length">
-        </span>
-
-        <!-- Action -->
-        <div class="p-1 rounded-full shadow-lg h-9 bg-black text-white w-28">
-            <button wire:click="deleteSelected" class="size-full px-0.5 flex items-center justify-center gap-x-1 text-[13px] font-medium rounded-full bg-red-500/15 text-red-500">
-                <x-lucide-trash-2 class="size-4 in-data-loading:hidden" />
-                <x-ui.spinner class="size-4 fill-red-500 not-in-data-loading:hidden" />
-                Supprimer
-            </button>
-        </div>
-
-        <!-- Close -->
-        <div class="size-8 rounded-full bg-black p-1 grid place-items-center">
-            <button @click="$wire.selected = []" class="hover:bg-white/10 size-full rounded-full grid place-items-center cursor-pointer">
-                <x-lucide-x class="size-3.5 text-white" />
-            </button>
-        </div>
-    </div>
-
-    {{-- <livewire:modals.update-task /> --}}
 </div>
