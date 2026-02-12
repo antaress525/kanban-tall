@@ -11,6 +11,7 @@ new class extends Component
 
     public function mount(array $props) {
         $this->task = Task::findOrFail($props['task_id']);
+        $this->authorize('update', $this->task);
         $this->form->setTask($this->task);
     }
 
@@ -26,7 +27,7 @@ new class extends Component
 ?>
 
 
-<div class="h-full">
+<div class="h-full flex flex-col">
     <!-- Header -->
     <div class="flex items-center justify-between p-3.5 border-b border-neutral-200">
         <h3 class="text-sm font-medium">Détails de la tâche</h3>
@@ -39,7 +40,8 @@ new class extends Component
     </div>
 
     <!-- Content -->
-    <div class="p-3.5">
+    <div class="p-3.5 flex-1 overflow-y-auto space-y-6">
+        <!-- Basic info -->
         <form wire:submit="basicUpdate" class="space-y-2.5">
             <x-ui.field>
                 <x-ui.label for="title">Titre</x-ui.label>
@@ -66,5 +68,16 @@ new class extends Component
                 <span>Enregistrer</span>
             </x-ui.button>
         </form>
+
+        <x-ui.separator />
+
+        <!-- Assign to -->
+        <div class="space-y-3.5">
+            <!-- Header -->
+            <div class="flex items-center gap-x-2">
+                <h3 class="text-[14.5px] font-medium">Assigner la tache</h3>
+            </div>
+            <livewire:assign-members :task="$task" />
+        </div>
     </div>
 </div>

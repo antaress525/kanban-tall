@@ -50,7 +50,23 @@ new class extends Component
         class="bg-zinc-50 shadow-xs border border-neutral-200 text-black"
         :title="$title"
         :count="$this->tasks->count()"
-    />
+    >
+        <x-slot:icon>
+            @switch($status)
+                @case('to_do')
+                    <x-lucide-circle-dashed class="size-4 text-black" />
+                    @break
+                @case('in_progress')
+                    <x-lucide-circle-dashed class="size-4 text-orange-400" />
+                    @break
+                @case('review')
+                    <x-lucide-circle-dashed class="size-4 text-blue-400" />
+                    @break
+                @default
+                    <x-lucide-circle-check class="size-4.5 text-green-400" />
+            @endswitch
+        </x-slot:icon>
+    </x-ui.kanban.header>
 
     <!-- Tasks -->
     <x-ui.kanban.container
@@ -58,11 +74,11 @@ new class extends Component
         wire:sort:group="columns"
     >
         @foreach ($this->tasks as $task)
-            <livewire:kanban.item :task="$task" :wire:key="$task->id" wire:sort:item="{{ $task->id }}">
-                <livewire:slot name="checkbox">
-                    <x-ui.checkbox :value="$task->id" /> 
-                </livewire:slot>
-            </livewire:kanban.item>
+            <livewire:kanban.item
+                :task="$task"
+                :wire:key="$task->id"
+                wire:sort:item="{{ $task->id }}"
+            />
         @endforeach
     </x-ui.kanban.container>
 
