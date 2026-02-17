@@ -13,6 +13,7 @@ new class extends Component
     }
 
     #[On('task-updated.{task.id}')]
+    #[On('priority-updated.{task.id}')]
     #[On('member-added.{task.id}')]
     #[On('member-removed.{task.id}')]
     public function refreshItem() {
@@ -25,9 +26,20 @@ new class extends Component
     {{ $attributes->merge(['class' => 'bg-white border border-neutral-200 rounded p-2 cursor-pointer task']) }}
     @click="$dispatch('open-modal', {type: 'drawer', size: 'sm', component: 'modals.task.update', props: {task_id: '{{ $task->id }}'}})"
 >
+    @if ($task->priority->value == 'low')
+        <x-ui.task-tag :label="$task->priority->label()" class="{{ $task->priority->classes() }}" />
+    @endif
+    @if ($task->priority->value == 'medium')
+        <x-ui.task-tag :label="$task->priority->label()" class="{{ $task->priority->classes() }}" />
+    @endif
+    @if ($task->priority->value == 'high')
+       <x-ui.task-tag :label="$task->priority->label()" class="{{ $task->priority->classes() }}" />
+    @endif
+
     <div class="flex items-center gap-x-2">
         <h4 class="text-sm font-medium">{{ $task->title }}</h4>
     </div>
+
     @if ($task->description)
         <p class="text-neutral-400 text-[13px]">{{ $task->description }}</p>
     @endif
