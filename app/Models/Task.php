@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enum\TaskPriorityEnum;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,13 +15,19 @@ class Task extends Model
         'status',
         'order',
         'description',
+        'priority',
     ];
-    protected function casts(): array
-    {
-        return [
-            'due_date' => 'datetime',
-        ];
-    }
+    // protected function casts(): array
+    // {
+    //     return [
+    //         'due_date' => 'datetime',
+    //     ];
+    // }
+
+    protected $casts = [
+        'priority' => TaskPriorityEnum::class,
+        'due_date' => 'datetime',
+    ];
 
     public function board(): BelongsTo {
         return $this->belongsTo(Board::class);

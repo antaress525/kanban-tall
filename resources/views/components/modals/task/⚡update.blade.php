@@ -3,16 +3,21 @@
 use Livewire\Component;
 use App\Models\Task;
 use App\Livewire\Forms\Task\UpdateForm;
+use Illuminate\Validation\Rule;
+use APP\Enum\TaskPriorityEnum;
+use Livewire\Attributes\Renderless;
 
 new class extends Component
 {
     public UpdateForm $form;
     public Task $task;
+    public $priority;
 
     public function mount(array $props) {
         $this->task = Task::findOrFail($props['task_id']);
         $this->authorize('update', $this->task);
         $this->form->setTask($this->task);
+        $this->priority = $this->task->priority;
     }
 
     public function basicUpdate() {
@@ -21,6 +26,15 @@ new class extends Component
         $this->dispatch("task-updated.{$this->task->id}")
             ->component('kanban.item');
         $this->dispatch('notify', type: 'success', message: 'La tache a ete mise a jour');
+    }
+
+    public function updatedPriority($value) {
+        $atributes = $this->validate( [
+            'priority' =>  [Rule::enum(TaskPriorityEnum::class)]
+        ]);
+        $this->task->update($atributes);
+        $this->dispatch("priority-updated.{$this->task->id}");
+        $this->skipRender();
     }
 
 }
@@ -68,6 +82,24 @@ new class extends Component
                 <span>Enregistrer</span>
             </x-ui.button>
         </form>
+
+        <x-ui.separator />
+
+        <!-- Priority -->
+        <div class="space-y-3.5">
+            <!-- Header -->
+            <div class="flex items-center gap-x-2">
+                <h3 class="text-[14.5px] font-medium">Prioriter</h3>
+                @error('priority')
+                    <x-ui.error>{{ $message }}</x-ui.error>
+                @enderror
+            </div>
+            <div class="grid grid-cols-2 items-center gap-2 flex-wrap">
+                @foreach (App\Enum\TaskPriorityEnum::cases() as $priority)
+                    <x-ui.radio-card wire:model.live.throttle.500ms="priority" name="priority" :label="$priority->label()" :value="$priority->value" :description="$priority->description()" />
+                @endforeach
+            </div>
+        </div>
 
         <x-ui.separator />
 
