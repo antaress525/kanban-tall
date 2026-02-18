@@ -77,7 +77,7 @@ new class extends Component
                     </x-ui.button>
                 </div>
             @endcan
-            
+
             <div class="hidden sm:block">
                 <x-ui.button variant="secondary" size="md" class="font-medium">
                     <x-lucide-settings class="size-4 text-neutral-500"/>
@@ -97,14 +97,33 @@ new class extends Component
 
     <!-- Board action -->
     <div class="flex items-center gap-x-2 justify-end mb-6">
-        <x-ui.button 
-            variant="secondary" 
-            size="md" 
-            class="font-medium"
-        >
-            <x-lucide-sliders-horizontal class="size-4 text-neutral-500"/>
-            Filtre
-        </x-ui.button>
+        <x-ui.dropdown>
+            <x-slot:trigger>
+                <x-ui.button 
+                    variant="secondary" 
+                    size="md" 
+                    class="font-medium"
+                >
+                    <x-lucide-sliders-horizontal class="size-4 text-neutral-500"/>
+                    Filtre
+                </x-ui.button>
+            </x-slot:trigger>
+            <x-slot:menu>
+                <x-ui.dropdown.item as="button">
+                    Base priorité
+                </x-ui.dropdown.item>
+                <x-ui.dropdown.item as="button">
+                    Moyenne priorité
+                </x-ui.dropdown.item>
+                <x-ui.dropdown.item as="button">
+                    Haute priorité
+                </x-ui.dropdown.item>
+                <x-ui.dropdown.item as="link" href="/tasks">
+                    Voir tout
+                </x-ui.dropdown.item>
+            </x-slot:menu>
+        </x-ui.dropdown>
+
         <x-ui.input wire:model.live.debounce.500ms="search" name="search" size="md" class="w-full sm:w-3xs" placeholder="Recherche">
             <x-slot:prefix>
                 <x-ui.spinner class="size-4 fill-neutral-400" wire:loading />
