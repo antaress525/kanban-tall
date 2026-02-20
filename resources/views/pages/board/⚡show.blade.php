@@ -124,8 +124,8 @@ new class extends Component
 
         <x-ui.input wire:model.live.debounce.500ms="search" name="search" size="md" class="w-full sm:w-3xs" placeholder="Recherche">
             <x-slot:prefix>
-                <x-ui.spinner class="size-4 fill-neutral-400" wire:loading />
-                <x-lucide-search class="size-4 text-neutral-500" wire:loading.remove />
+                <x-ui.spinner class="size-4 fill-neutral-400" wire:loading wire:target="search" />
+                <x-lucide-search class="size-4 text-neutral-500" wire:loading.remove wire:target="search" />
             </x-slot:prefix>
         </x-ui.input>
     </div>
@@ -138,6 +138,7 @@ new class extends Component
                 :status="$status"
                 :board="$board"
                 :priority="$priority"
+                :search="$search"
             />
         @endforeach 
     </div>
@@ -153,6 +154,7 @@ new class extends Component
                         :status="$status"
                         :board="$board"
                         :priority="$priority"
+                        :search="$search"
                     />
                 @endforeach
             </div>
