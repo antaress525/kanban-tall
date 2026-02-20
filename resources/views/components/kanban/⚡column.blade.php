@@ -10,6 +10,7 @@ use Livewire\Attributes\Renderless;
 new class extends Component
 {
     public string $title = '';
+    public array $priority = [];
     public string $status = '';
     public Board $board;
     public string $search = '';
@@ -20,6 +21,9 @@ new class extends Component
             ->when($this->search, function($query) {
                 $query->whereLike('title', '%'.$this->search.'%');
             })
+            ->when(count($this->priority), function ($query) {
+                $query->whereIn('priority', $this->priority);
+            })
             ->orderBy('order', 'asc')
             ->get();
     }
@@ -27,6 +31,11 @@ new class extends Component
     #[On('search-task')]
     public function searchTask(string $search) {
         $this->search = trim($search);
+    }
+
+    #[On('priority-updated')]
+    public function updatePriority(array $priority) {
+        $this->priority = $priority;
     }
 
     #[On('task-created')]
