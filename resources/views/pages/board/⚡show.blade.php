@@ -2,10 +2,12 @@
 
 use Livewire\Component;
 use App\Models\Board;
-use App\Models\Task;
 use App\Enum\TaskStatuEnum;
-use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
+use Illuminate\Validation\Rule;
+use App\Enum\TaskPriorityEnum;
+use Illuminate\Validation\ValidationException;
+
 
 new class extends Component
 {
@@ -13,23 +15,43 @@ new class extends Component
 
     public array $columns = [];
 
+    #[Url(as: 'p')]
+    public array $priority = [];
+
     #[Url(as: 'q', except: '')]
     public string $search = '';
 
     public function mount(Board $board) {
         $this->board = $board->load(['tasks', 'members']);
-
         $this->columns = [
             TaskStatuEnum::TODO->value => TaskStatuEnum::TODO->label(),
             TaskStatuEnum::INPROGRESS->value => TaskStatuEnum::INPROGRESS->label(),
             TaskStatuEnum::REVIEW->value => TaskStatuEnum::REVIEW->label(),
             TaskStatuEnum::DONE->value => TaskStatuEnum::DONE->label()
         ];
+
+        try {
+            $this->validate();
+        } catch(ValidationException $e) {
+            $this->reset('priority');
+        }
+    }
+
+    public function rules(): array {
+        return [
+            'priority' => ['array', 'nullable'],
+            'priority.*' => ['nullable', Rule::enum(TaskPriorityEnum::class)]
+        ];
     }
 
     public function updatedSearch(string $value) {
         $this->dispatch('search-task', search: $value)
             ->component('kanban.column');
+    }
+
+    public function updatedPriority(array $value) {
+        $this->dispatch('priority-updated', priority: $value)
+             ->component('kanban.column');
     }
 
     public function render()
@@ -97,32 +119,8 @@ new class extends Component
 
     <!-- Board action -->
     <div class="flex items-center gap-x-2 justify-end mb-6">
-        <x-ui.dropdown>
-            <x-slot:trigger>
-                <x-ui.button 
-                    variant="secondary" 
-                    size="md" 
-                    class="font-medium"
-                >
-                    <x-lucide-sliders-horizontal class="size-4 text-neutral-500"/>
-                    Filtre
-                </x-ui.button>
-            </x-slot:trigger>
-            <x-slot:menu>
-                <x-ui.dropdown.item as="button">
-                    Base priorité
-                </x-ui.dropdown.item>
-                <x-ui.dropdown.item as="button">
-                    Moyenne priorité
-                </x-ui.dropdown.item>
-                <x-ui.dropdown.item as="button">
-                    Haute priorité
-                </x-ui.dropdown.item>
-                <x-ui.dropdown.item as="link" href="/tasks">
-                    Voir tout
-                </x-ui.dropdown.item>
-            </x-slot:menu>
-        </x-ui.dropdown>
+        {{-- <livewire:pages::board.partials.filter wire:model.live.debounce.500ms="priority" /> --}}
+        @include('pages.board.partials.filter')
 
         <x-ui.input wire:model.live.debounce.500ms="search" name="search" size="md" class="w-full sm:w-3xs" placeholder="Recherche">
             <x-slot:prefix>
@@ -135,7 +133,12 @@ new class extends Component
     <!-- Columns desktop-->
     <div class="flex-1 gap-x-2 hidden xl:flex">
         @foreach ($columns as $status => $title)
-            <livewire:kanban.column :title="$title" :status="$status" :board="$board" />
+            <livewire:kanban.column
+                :title="$title"
+                :status="$status"
+                :board="$board"
+                :priority="$priority"
+            />
         @endforeach 
     </div>
 
@@ -145,8 +148,13 @@ new class extends Component
         <div class="embla__viewport overflow-hidden">
             <div class="flex flex-1 gap-x-2 .embla__container">
                 @foreach ($columns as $status => $title)
-                    <livewire:kanban.column :title="$title" :status="$status" :board="$board" />
-                @endforeach 
+                    <livewire:kanban.column
+                        :title="$title"
+                        :status="$status"
+                        :board="$board"
+                        :priority="$priority"
+                    />
+                @endforeach
             </div>
         </div>
     </div>
