@@ -8,3 +8,140 @@ new EmblaCarousel(viewport, {
     align: 'start',
     dragFree: false,
 })
+
+document.addEventListener('alpine:init', () => {
+    Alpine.data('datePicker', (config = {}) => ({
+        // property exposed at x-model / wire:model
+        modelValue: config.value ?? null,
+
+        open: false,
+        selected: null,
+        month: null,
+        year: null,
+        calendar: [],
+        formatted: '',
+
+        months: [
+            'janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin',
+            'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'
+        ],
+
+        init() {
+            if (this.modelValue) {
+                this.selected = new Date(this.modelValue);
+            }
+
+            const base = this.selected ?? new Date();
+            this.month = base.getMonth();
+            this.year = base.getFullYear();
+
+            this.generate();
+            this.format();
+
+            // Sync if Livewire changes the value
+            this.$watch('modelValue', (value) => {
+                if (!value) return;
+
+                this.selected = new Date(value);
+                this.month = this.selected.getMonth();
+                this.year = this.selected.getFullYear();
+
+                this.generate();
+                this.format();
+            });
+        },
+
+        generate() {
+            const firstDay = new Date(this.year, this.month, 1);
+            const lastDay = new Date(this.year, this.month + 1, 0);
+
+            const startDay = (firstDay.getDay() + 6) % 7;
+            const daysInMonth = lastDay.getDate();
+
+            this.calendar = [];
+
+            // previous days
+            for (let i = startDay; i > 0; i--) {
+                const d = new Date(this.year, this.month, 1 - i);
+                this.calendar.push({
+                    date: d.toISOString(),
+                    day: d.getDate(),
+                    currentMonth: false
+                });
+            }
+
+            // current days
+            for (let i = 1; i <= daysInMonth; i++) {
+                const d = new Date(this.year, this.month, i);
+                this.calendar.push({
+                    date: d.toISOString(),
+                    day: i,
+                    currentMonth: true
+                });
+            }
+
+            // complete the grid
+            while (this.calendar.length % 7 !== 0) {
+                const d = new Date(
+                    this.year,
+                    this.month + 1,
+                    this.calendar.length - daysInMonth - startDay + 1
+                );
+
+                this.calendar.push({
+                    date: d.toISOString(),
+                    day: d.getDate(),
+                    currentMonth: false
+                });
+            }
+        },
+
+        select(day) {
+            this.selected = new Date(day.date);
+
+            // update x-model / wire:model automatically
+            this.modelValue = this.selected.toISOString().split('T')[0];
+
+            this.format();
+            this.open = false;
+        },
+
+        isSelected(day) {
+            if (!this.selected) return false;
+
+            return new Date(day.date).toDateString() ===
+                   this.selected.toDateString();
+        },
+
+        prevMonth() {
+            this.month = this.month === 0 ? 11 : this.month - 1;
+            if (this.month === 11) this.year--;
+
+            this.generate();
+        },
+
+        nextMonth() {
+            this.month = this.month === 11 ? 0 : this.month + 1;
+            if (this.month === 0) this.year++;
+
+            this.generate();
+        },
+
+        get monthLabel() {
+            return `${this.months[this.month]} ${this.year}`;
+        },
+
+        format() {
+            if (!this.selected) {
+                this.formatted = '';
+                return;
+            }
+
+            const day = this.selected.getDate();
+            const month = this.months[this.selected.getMonth()];
+            const year = this.selected.getFullYear();
+
+            this.formatted = `${day} ${month} ${year}`;
+        }
+    }));
+});
