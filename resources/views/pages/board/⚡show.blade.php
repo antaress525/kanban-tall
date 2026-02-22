@@ -22,6 +22,7 @@ new class extends Component
     public string $search = '';
 
     public function mount(Board $board) {
+        $this->date = now()->format('Y-m-d');
         $this->board = $board->load(['tasks', 'members']);
         $this->columns = [
             TaskStatuEnum::TODO->value => TaskStatuEnum::TODO->label(),
@@ -119,7 +120,6 @@ new class extends Component
 
     <!-- Board action -->
     <div class="flex items-center gap-x-2 justify-end mb-6">
-        {{-- <livewire:pages::board.partials.filter wire:model.live.debounce.500ms="priority" /> --}}
         @include('pages.board.partials.filter')
 
         <x-ui.input wire:model.live.debounce.500ms="search" name="search" size="md" class="w-full sm:w-3xs" placeholder="Recherche">
