@@ -5,7 +5,6 @@ use App\Models\Task;
 use App\Livewire\Forms\Task\UpdateForm;
 use Illuminate\Validation\Rule;
 use APP\Enum\TaskPriorityEnum;
-use Livewire\Attributes\Renderless;
 
 new class extends Component
 {
@@ -41,7 +40,7 @@ new class extends Component
 
     public function updateDueDate($value) {
         $this->validate([
-            'dueDate' => ['nullable', Rule::date()->after(now())]
+            'dueDate' => ['nullable', 'date', 'after_or_equal:today']
         ]);
         $this->task->update(['due_date' => $value]);
         $this->dispatch("due-date-updated.{$this->task->id}");
@@ -145,7 +144,7 @@ new class extends Component
                 }"
                 x-init="$watch('dueDate', value => updateDueDate(value))"
                 class="flex items-center gap-2 flex-wrap">
-                <x-ui.date-picker x-model.throttle.500ms="dueDate" />
+                <x-ui.date-picker x-model.throttle.500ms="dueDate" :disable-past="true" />
                 <x-ui.button
                     size="md"
                     x-show="dueDate"

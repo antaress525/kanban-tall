@@ -1,10 +1,14 @@
 @props([
     'value' => null,
-    'placeholder' => 'Choisir une date'
+    'placeholder' => 'Choisir une date',
+    'disablePast' => false,
 ])
 
 <div
-    x-data="datePicker({ value: '{{ $value }}' })"
+    x-data="datePicker({
+        value: '{{ $value }}',
+        disablePast: @js($disablePast),
+     })"
     x-modelable="modelValue"
     {{ $attributes }}
     x-init="init()"
@@ -26,6 +30,7 @@
         x-show="open"
         @click.away="open = false"
         x-transition
+        x-cloak
         class="absolute mt-2 bg-white border border-neutral-200 rounded-xl shadow-lg p-4 w-72 z-50"
     >
         <!-- header -->
@@ -37,7 +42,6 @@
             <x-ui.icon-button size="sm" type="button" @click="nextMonth()">
                 <x-lucide-chevron-right class="size-4 text-neutral-500"/>
             </x-ui.icon-button>
-            {{-- <button type="button" @click="nextMonth()">›</button> --}}
         </div>
 
         <!-- days -->
@@ -46,10 +50,12 @@
                 <button
                     type="button"
                     @click="select(day)"
-                    class="h-9 rounded-md transition"
+                    class="h-9 rounded-md"
+                    :disabled="day.isDisabled"
                     :class="{
                         'text-neutral-300': !day.currentMonth,
-                        'hover:bg-neutral-50': true,
+                        'opacity-40 cursor-not-allowed': day.isDisabled,
+                        'hover:bg-neutral-50': !day.isDisabled,
                         'bg-indigo-400 text-white': isSelected(day)
                     }"
                     x-text="day.day"

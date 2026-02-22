@@ -13,8 +13,10 @@ document.addEventListener('alpine:init', () => {
     Alpine.data('datePicker', (config = {}) => ({
         // property exposed at x-model / wire:model
         modelValue: config.value ?? null,
+        disablePast: config.disablePast ?? false,
 
         open: false,
+        today: null,
         selected: null,
         month: null,
         year: null,
@@ -37,6 +39,9 @@ document.addEventListener('alpine:init', () => {
 
             this.generate();
             this.format();
+
+            this.today = new Date();
+            this.today.setHours(0,0,0,0);
 
             // Sync if Livewire changes the value
             this.$watch('modelValue', (value) => {
@@ -65,46 +70,44 @@ document.addEventListener('alpine:init', () => {
 
             this.calendar = [];
 
-            // previous days
+            const pushDay = (date, currentMonth) => {
+                const normalized = new Date(date);
+                normalized.setHours(0,0,0,0);
+
+                this.calendar.push({
+                    date: date.toISOString(),
+                    day: date.getDate(),
+                    currentMonth,
+                    isDisabled: this.disablePast && normalized < this.today
+                });
+            };
+
+            // jours précédent
             for (let i = startDay; i > 0; i--) {
                 const d = new Date(this.year, this.month, 1 - i);
-                this.calendar.push({
-                    date: d.toISOString(),
-                    day: d.getDate(),
-                    currentMonth: false
-                });
+                pushDay(d, false);
             }
 
-            // current days
+            // jours courant
             for (let i = 1; i <= daysInMonth; i++) {
                 const d = new Date(this.year, this.month, i);
-                this.calendar.push({
-                    date: d.toISOString(),
-                    day: i,
-                    currentMonth: true
-                });
+                pushDay(d, true);
             }
 
-            // complete the grid
             while (this.calendar.length % 7 !== 0) {
                 const d = new Date(
                     this.year,
                     this.month + 1,
                     this.calendar.length - daysInMonth - startDay + 1
                 );
-
-                this.calendar.push({
-                    date: d.toISOString(),
-                    day: d.getDate(),
-                    currentMonth: false
-                });
+                pushDay(d, false);
             }
         },
 
         select(day) {
-            this.selected = new Date(day.date);
+            if (day.isDisabled) return;
 
-            // update x-model / wire:model automatically
+            this.selected = new Date(day.date);
             this.modelValue = this.selected.toISOString().split('T')[0];
 
             this.format();
