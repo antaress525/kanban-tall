@@ -64,14 +64,14 @@ class User extends Authenticatable
 
     }
 
-    public function getAvatarUrl(): string {
+    public function getAvatarUrl(int $size = 30): string {
         if ($this->avatar) {
             return asset('storage/avatars/'.$this->avatar);
         }
 
         $bg = $this->color ? ltrim($this->color, '#') : 'random';
 
-        return 'https://ui-avatars.com/api/?size=30&name='.urlencode($this->name).'&background='.$bg.'&format=svg';
+        return 'https://ui-avatars.com/api/?size='.$size.'&name='.urlencode($this->name).'&background='.$bg.'&format=svg';
     }
 
     protected static function booted(): void

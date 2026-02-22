@@ -8,7 +8,7 @@
     x-modelable="modelValue"
     {{ $attributes }}
     x-init="init()"
-    {{ $attributes->merge(['class' => 'relative w-42']) }}
+    {{ $attributes->merge(['class' => 'relative w-46']) }}
 >
     <button
         type="text"

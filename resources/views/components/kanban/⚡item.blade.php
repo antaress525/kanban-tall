@@ -16,6 +16,7 @@ new class extends Component
     #[On('priority-updated.{task.id}')]
     #[On('member-added.{task.id}')]
     #[On('member-removed.{task.id}')]
+    #[On('due-date-updated.{task.id}')]
     public function refreshItem() {
         $this->task->refresh();
     }
@@ -43,23 +44,23 @@ new class extends Component
     @if ($task->description)
         <p class="text-neutral-400 text-[13px]">{{ $task->description }}</p>
     @endif
-    @if ($task->due_date)
-        <span class="w-max font-medium flex items-center gap-x-1 text-xs px-2 py-1 rounded-full bg-amber-500/10 text-amber-500">
-            <x-lucide-calendar class="size-3.5"/>
-            {{ $task->due_date->diffForHumans() }}
-        </span>
-    @endif
 
     @if ($task->assignees->count() > 0)
         <div class="py-1 mt-2 flex items-center border-t border-neutral-200">
             <x-ui.avatar-group>
                 @foreach ($task->assignees()->limit(3)->get() as $member)
-                    <img src="{{ $member->getAvatarUrl() }}" class="border-2 border-white rounded-lg" alt="">
+                    <img src="{{ $member->getAvatarUrl(28) }}" class="border-2 border-white rounded-lg" alt="">
                 @endforeach
                 @if ($task->assignees()->count() > 3)
                     <x-ui.avatar-group-count count="{{ $board->members()->count() - 3 }}" />
                 @endif
             </x-ui.avatar-group>
+            @if ($task->due_date)
+                <div class="ml-auto px-2.5 py-1.5 rounded-full text-xs text-neutral-600 font-medium flex items-center bg-neutral-100">
+                    <x-lucide-calendar class="w-3.5 h-3.5 mr-1" />
+                    {{ $task->due_date->format('d M Y') }}
+                </div>
+            @endif
         </div>
     @endif
 </div>

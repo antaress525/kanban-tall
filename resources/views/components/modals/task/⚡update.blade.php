@@ -12,12 +12,14 @@ new class extends Component
     public UpdateForm $form;
     public Task $task;
     public $priority;
+    public $dueDate;
 
     public function mount(array $props) {
         $this->task = Task::findOrFail($props['task_id']);
         $this->authorize('update', $this->task);
         $this->form->setTask($this->task);
         $this->priority = $this->task->priority;
+        $this->dueDate = $this->task->due_date;
     }
 
     public function basicUpdate() {
@@ -35,6 +37,24 @@ new class extends Component
         $this->task->update($atributes);
         $this->dispatch("priority-updated.{$this->task->id}");
         $this->skipRender();
+    }
+
+    public function updateDueDate($value) {
+        $this->validate([
+            'dueDate' => ['nullable', Rule::date()->after(now())]
+        ]);
+        $this->task->update(['due_date' => $value]);
+        $this->dispatch("due-date-updated.{$this->task->id}");
+    }
+
+    public function cleanDueDate() {
+        $this->task->update(['due_date' => null]);
+        $this->dispatch("due-date-updated.{$this->task->id}");
+    }
+
+    public function render()
+    {
+        return $this->view();
     }
 
 }
@@ -98,6 +118,44 @@ new class extends Component
                 @foreach (App\Enum\TaskPriorityEnum::cases() as $priority)
                     <x-ui.radio-card wire:model.live.throttle.500ms="priority" name="priority" :label="$priority->label()" :value="$priority->value" :description="$priority->description()" />
                 @endforeach
+            </div>
+        </div>
+
+        <x-ui.separator />
+
+        <!-- Due date -->
+        <div class="space-y-3.5">
+            <!-- Header -->
+            <div class="flex items-center gap-x-2">
+                <h3 class="text-[14.5px] font-medium">Date d'échéance</h3>
+                @error('dueDate')
+                    <x-ui.error>{{ $message }}</x-ui.error>
+                @enderror
+            </div>
+            <div
+                x-data="{
+                    dueDate: $wire.dueDate,
+                    updateDueDate(value) {
+                        this.$wire.updateDueDate(value);
+                    },
+                    cleanDueDate() {
+                        this.dueDate = null;
+                        this.$wire.cleanDueDate();
+                    }
+                }"
+                x-init="$watch('dueDate', value => updateDueDate(value))"
+                class="flex items-center gap-2 flex-wrap">
+                <x-ui.date-picker x-model.throttle.500ms="dueDate" />
+                <x-ui.button
+                    size="md"
+                    x-show="dueDate"
+                    x-transition
+                    variant="secondary"
+                    @click="cleanDueDate"
+                >
+                    <x-lucide-x class="size-3.5 text-neutral-500"/>
+                    Supprimer
+                </x-ui.button>
             </div>
         </div>
 

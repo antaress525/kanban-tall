@@ -15,14 +15,9 @@ class Task extends Model
         'status',
         'order',
         'description',
+        'due_date',
         'priority',
     ];
-    // protected function casts(): array
-    // {
-    //     return [
-    //         'due_date' => 'datetime',
-    //     ];
-    // }
 
     protected $casts = [
         'priority' => TaskPriorityEnum::class,

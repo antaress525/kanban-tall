@@ -40,7 +40,12 @@ document.addEventListener('alpine:init', () => {
 
             // Sync if Livewire changes the value
             this.$watch('modelValue', (value) => {
-                if (!value) return;
+                if (!value) {
+                    this.selected = null;
+                    this.formatted = '';
+                    return;
+                }
+
 
                 this.selected = new Date(value);
                 this.month = this.selected.getMonth();
