@@ -22,7 +22,7 @@ new class extends Component
     }
 
     public function basicUpdate() {
-        $attributes = $this->validate();
+        $attributes = $this->form->validate();
         $this->task->update($attributes);
         $this->dispatch("task-updated.{$this->task->id}")
             ->component('kanban.item');
