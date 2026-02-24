@@ -1,5 +1,9 @@
-@props(['avatar' => null, 'name' => 'Unkown'])
+@props(['avatar' => null, 'name' => 'Unkown', 'rounded' => 'full'])
 
-<div class="w-8 h-8 rounded-full flex items-center justify-center overflow-hidden" aria-label="{{ $name }}">
+@php
+    $classes = "size-8 rounded-{$rounded} flex items-center justify-center overflow-hidden";
+@endphp
+
+<div {{ $attributes->merge(['class' => $classes]) }} aria-label="{{ $name }}">
     <img src="{{ $avatar }}" alt="{{ $name }}" class="w-full h-full object-cover">
 </div>
