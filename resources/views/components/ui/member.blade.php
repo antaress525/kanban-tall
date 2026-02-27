@@ -5,9 +5,7 @@
 @endphp
 
 <div {{ $attributes->merge(['class' => $classes]) }}>
-    <div class="size-8 font-medium grid place-items-center rounded-lg bg-blue-100 text-blue-600">
-        {{ strtoupper(substr($user->name, 0, 2)) }}
-    </div>
+    <x-ui.avatar :avatar="$user->getAvatarUrl()"  rounded="lg" />
     <div class="flex-1 flex items-center justify-between">
         <div>
             <p class="font-medium text-sm">{{ $user->name }}</p>
