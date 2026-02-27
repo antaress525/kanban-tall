@@ -12,7 +12,7 @@
 
         @livewireStyles
     </head>
-    <body  class="w-screen h-screen flex max-lg:flex-col">
+    <body  class="w-screen h-screen overflow-hidden flex max-lg:flex-col">
         <!-- Nav Mobile -->
         <nav class="flex items-center justify-between h-13 p-4 lg:hidden">
             <x-ui.nav-mobile />
@@ -21,7 +21,7 @@
 
 
         <!-- Nav desktop -->
-        <nav class="hidden lg:flex bg-neutral-50 w-(--aside-width) h-full p-3.5  flex-col">
+        <nav class="hidden lg:flex shrink-0 bg-neutral-50 w-(--aside-width) h-full p-3.5 border-r border-neutral-200 flex-col">
             <!-- Logo -->
             <div class="flex items-center gap-x-2 h-13 mb-13">
                 <x-ui.logo />
@@ -36,12 +36,13 @@
                     </x-slot:icon>
                     Projet
                 </x-ui.nav-item>
-                <x-ui.nav-item href="/dashboard">
+                <livewire:pages::board.partials.notification />
+                {{-- <x-ui.nav-item href="/dashboard">
                     <x-slot:icon>
                         <x-lucide-bell class="size-5"/>
                     </x-slot:icon>
                     Notifications
-                </x-ui.nav-item>
+                </x-ui.nav-item> --}}
             </div>
             <!-- Footer -->
             <div class="space-y-2">

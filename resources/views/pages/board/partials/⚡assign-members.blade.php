@@ -5,6 +5,7 @@ use App\Models\Task;
 use Livewire\Attributes\Computed;
 use Illuminate\Support\Collection;
 use App\Models\User;
+use App\Notifications\TaskAssignedNotification;
 
 new class extends Component
 {
@@ -25,13 +26,19 @@ new class extends Component
     }
 
     public function assign(User $user) {
-        if (! $this->task->board->members->contains($user->id)) {
+        if (!$this->task->board->members->contains($user->id)) {
             return;
         }
 
-        if (! $this->task->assignees->contains($user->id)) {
+        if (!$this->task->assignees->contains($user->id)) {
             $this->task->assignees()->attach($user->id);
         }
+
+        $user->notify(new TaskAssignedNotification(
+                task: $this->task,
+                sender: auth()->user()
+            )
+        );
 
         $this->task->load('assignees');
         $this->dispatch("member-added.{$this->task->id}")

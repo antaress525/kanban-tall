@@ -166,7 +166,7 @@ new class extends Component
             <div class="flex items-center gap-x-2">
                 <h3 class="text-[14.5px] font-medium">Assigner la tache</h3>
             </div>
-            <livewire:assign-members :task="$task" />
+            <livewire:pages::board.partials.assign-members :task="$task" />
         </div>
     </div>
 </div>
