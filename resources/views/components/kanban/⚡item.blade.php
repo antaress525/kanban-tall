@@ -52,7 +52,7 @@ new class extends Component
                     <img src="{{ $member->getAvatarUrl(28) }}" class="border-2 border-white rounded-lg" alt="">
                 @endforeach
                 @if ($task->assignees()->count() > 3)
-                    <x-ui.avatar-group-count count="{{ $board->members()->count() - 3 }}" />
+                    <x-ui.avatar-group-count count="{{ $task->assignees()->count() - 3 }}" />
                 @endif
             </x-ui.avatar-group>
             @if ($task->due_date)
