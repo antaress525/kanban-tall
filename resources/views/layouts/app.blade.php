@@ -21,7 +21,7 @@
 
 
         <!-- Nav desktop -->
-        <nav class="hidden lg:flex bg-neutral-50 w-(--aside-width) h-full p-3.5 border-r border-neutral-200 flex-col">
+        <nav class="hidden lg:flex shrink-0 bg-neutral-50 w-(--aside-width) h-full p-3.5 border-r border-neutral-200 flex-col">
             <!-- Logo -->
             <div class="flex items-center gap-x-2 h-13 mb-13">
                 <x-ui.logo />
