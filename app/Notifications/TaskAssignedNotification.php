@@ -6,6 +6,7 @@ use App\Models\Task;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -28,7 +29,7 @@ class TaskAssignedNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database', 'broadcast'];
     }
 
     /**
@@ -65,5 +66,16 @@ class TaskAssignedNotification extends Notification
             'sender_avatar' => $this->sender->getAvatarUrl(),
             'receiver_id' => $notifiable->id,
         ];
+    }
+
+    public function toBroadcast(object $notifiable)
+    {
+        return new BroadcastMessage([
+            'task_id' => $this->task->id,
+            'task_title' => $this->task->title,
+            'board_name' => $this->task->board->name,
+            'sender_name' => $this->sender->name,
+            'sender_avatar' => $this->sender->getAvatarUrl(),
+        ]);
     }
 }
