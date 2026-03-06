@@ -7,6 +7,8 @@ use Livewire\Attributes\Url;
 use Illuminate\Validation\Rule;
 use App\Enum\TaskPriorityEnum;
 use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Async;
+use Livewire\Attributes\Renderless;
 
 
 new class extends Component
@@ -24,6 +26,7 @@ new class extends Component
     public function mount(Board $board) {
         $this->date = now()->format('Y-m-d');
         $this->board = $board->load(['tasks', 'members']);
+        $this->boardName = $board->name;
         $this->columns = [
             TaskStatuEnum::TODO->value => TaskStatuEnum::TODO->label(),
             TaskStatuEnum::INPROGRESS->value => TaskStatuEnum::INPROGRESS->label(),
@@ -55,6 +58,11 @@ new class extends Component
              ->component('kanban.column');
     }
 
+    #[Async, Renderless]
+    public function saveBoardName(string $name) {
+        $this->board->update(['name' => $name]);
+    }
+
     public function render()
     {
         return $this->view()
@@ -65,18 +73,54 @@ new class extends Component
 
 <div class="p-3.5 flex flex-col h-full">
     <!-- Board Header -->
-    <div class="flex items-center justify-between mb-4">
+    <div x-data="{
+            showEditBoardName: false,
+            boardName: '{{ $board->name }}',
+            reveal() {
+                this.showEditBoardName = true
+
+                setTimeout(() => {
+                    $refs.boardNameInput.focus()
+                })
+            },
+            hide() {
+                this.showEditBoardName = false
+                if(this.boardName === '') {
+                    this.boardName = '{{ $board->name }}'
+                }
+            },
+            save(name) {
+                const newValue = name.trim()
+                if(newValue === '') return
+                this.$wire.saveBoardName(newValue)
+            }
+        }"
+        x-init="$watch('boardName', (value) => {
+                save(value)
+
+        })"
+        class="flex items-center justify-between mb-4">
         <div class="flex items-center gap-x-3">
-            <div 
+            <div
                 class="size-8 font-medium grid place-items-center rounded-lg" style="background-color: {{ $board->color.'26' }}; color: {{ $board->color }}; background-opacity: 0.1;"
             >
                 {{ strtoupper(substr($board->name, 0, 1)) }}
             </div>
             <!-- Board name desktop -->
-            <h3 class="text-lg hidden sm:block sm:text-xl truncate font-medium">{{ $board->name }}</h3>
+            <h3 @click="reveal" x-show="!showEditBoardName" class="text-lg hidden sm:block sm:text-xl truncate font-medium cursor-pointer" x-text="boardName"></h3>
+            <x-ui.input
+                @click.outside="hide"
+                x-ref="boardNameInput"
+                x-show="showEditBoardName"
+                x-model.debounce.500ms="boardName"
+                name="board-name"
+                size="md" 
+                {{-- class="hidden sm:block" --}}
+            />
+
 
             <!-- Board name mobile -->
-            <h3 class="text-lg sm:hidden sm:text-xl truncate font-medium">{{ Str::limit(Str::ucfirst($board->name), 9) }}</h3>
+            <h3 @click="reveal" x-show="!showEditBoardName" class="text-lg sm:hidden sm:text-xl truncate font-medium">{{ Str::limit(Str::ucfirst($board->name), 9) }}</h3>
         </div>
         <div class="flex items-center gap-x-2">
             <x-ui.avatar-group>
