@@ -60,6 +60,7 @@ new class extends Component
 
     #[Async, Renderless]
     public function saveBoardName(string $name) {
+        $this->authorize('updateName', $this->board);
         $this->board->update(['name' => $name]);
     }
 
@@ -107,16 +108,18 @@ new class extends Component
                 {{ strtoupper(substr($board->name, 0, 1)) }}
             </div>
             <!-- Board name desktop -->
-            <h3 @click="reveal" x-show="!showEditBoardName" class="text-lg hidden sm:block sm:text-xl truncate font-medium cursor-pointer" x-text="boardName"></h3>
-            <x-ui.input
-                @click.outside="hide"
-                x-ref="boardNameInput"
-                x-show="showEditBoardName"
-                x-model.debounce.500ms="boardName"
-                name="board-name"
-                size="md" 
-                {{-- class="hidden sm:block" --}}
-            />
+            <h3 @can('updateName', $board) @click="reveal" x-show="!showEditBoardName"  @endcan  class="text-lg hidden sm:block sm:text-xl truncate font-medium cursor-pointer" x-text="boardName"></h3>
+            @can('updateName', $board)
+                <x-ui.input
+                    @click.outside="hide"
+                    x-ref="boardNameInput"
+                    x-show="showEditBoardName"
+                    x-model.debounce.500ms="boardName"
+                    name="board-name"
+                    size="md" 
+                    {{-- class="hidden sm:block" --}}
+                />
+            @endcan
 
 
             <!-- Board name mobile -->

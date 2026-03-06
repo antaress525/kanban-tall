@@ -74,4 +74,9 @@ class BoardPolicy
     {
         return $user->id === $board->user_id;
     }
+
+    public function updateName(User $user, Board $board): bool
+    {
+        return $user->id === $board->user_id;
+    }
 }
