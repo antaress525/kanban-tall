@@ -96,7 +96,7 @@ new class extends Component
         <!-- Action Message -->
         <x-ui.action-message
             on="user-invited"
-            class="absolute top-1 left-1/2 -translate-x-1/2 bg-green-50 border border-green-400 text-green-400">
+            class="absolute top-1 left-1/2 -translate-x-1/2">
             Invitation a bien ete envoyer
         </x-ui.action-message>
 
