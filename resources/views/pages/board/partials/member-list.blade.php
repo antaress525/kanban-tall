@@ -13,7 +13,7 @@
     <button @click="toggle()" class="cursor-pointer">
         <x-ui.avatar-group>
             @foreach ($board->members()->limit(3)->get() as $member)
-                <img src="{{ $member->getAvatarUrl() }}" class="border-2 border-white rounded-lg" alt="">
+                <x-ui.avatar :avatar="$member->getAvatarUrl()" :name="$member->name" rounded="lg" class="border-2 border-white" />
             @endforeach
             @if ($board->members()->count() > 3)
                 <x-ui.avatar-group-count count="{{ $board->members()->count() - 3 }}" />
@@ -28,9 +28,7 @@
         <div class="h-full overflow-y-auto flex-1">
             @foreach ($board->members as $member)
                 <div class="flex items-center gap-x-2 p-2 cursor-pointer hover:bg-neutral-100">
-                    <img src="{{ $member->getAvatarUrl() }}" class="size-8 rounded-lg" alt="">
-                    <div>
-                    </div>
+                    <x-ui.avatar :avatar="$member->getAvatarUrl()" :name="$member->name" rounded="lg" />
                     <span class="text-sm text-neutral-700 font-medium">{{ $member->name }}</span>
                 </div>
             @endforeach
