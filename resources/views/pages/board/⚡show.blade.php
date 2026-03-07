@@ -127,31 +127,6 @@ new class extends Component
         </div>
         <div class="flex items-center gap-x-2">
             @include('pages.board.partials.member-list')
-            {{-- <x-ui.dropdown>
-                <x-slot name="trigger">
-                    <x-ui.avatar-group>
-                        @foreach ($board->members()->limit(3)->get() as $member)
-                            <img src="{{ $member->getAvatarUrl() }}" class="border-2 border-white rounded-lg" alt="">
-                        @endforeach
-                        @if ($board->members()->count() > 3)
-                            <x-ui.avatar-group-count count="{{ $board->members()->count() - 3 }}" />
-                        @endif
-                    </x-ui.avatar-group>
-                </x-slot>
-                <x-slot name="menu">
-                    <div class="px-2 py-1.5 text-sm text-neutral-500">
-                        Membres
-                    </div>
-                    @foreach ($board->members as $member)
-                        <div class="flex items-center gap-x-2 px-2 py-2 rounded-md cursor-pointer hover:bg-neutral-100">
-                            <img src="{{ $member->getAvatarUrl() }}" class="size-8 rounded-lg" alt="">
-                            <div>
-                            </div>
-                            <span class="text-sm text-neutral-700 font-medium">{{ $member->name }}</span>
-                        </div>
-                    @endforeach
-                </x-slot>
-            </x-ui.dropdown> --}}
             @can('invite', $board)
                 <div class="hidden sm:block">
                     <x-ui.button 

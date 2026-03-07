@@ -12,7 +12,7 @@
     <div
         x-show="open"
         x-transition
-        class="absolute p-1 z-50 bg-white border border-neutral-200 rounded-md shadow-lg mt-2 min-w-64"
+        class="absolute p-1 z-50 bg-white border border-neutral-200 rounded-md shadow-lg mt-2 min-w-40"
         :class="{
             'left-0': '{{ $position }}'.includes('left'),
             'right-0': '{{ $position }}'.includes('right'),
