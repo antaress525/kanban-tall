@@ -35,7 +35,7 @@ new #[Layout('layouts::guest'), Title('Se connecter')] class extends Component
     <!-- Error message -->
     <x-ui.action-message 
         on="error-credentials" 
-        class="p-3.5 bg-red-50 rounded-lg text-red-500 border border-red-500"
+        class="bg-red-50 rounded-lg text-red-500 border border-red-500 mx-auto"
         :auto-close="false"
     >
         Email ou mot de passe incorrect.

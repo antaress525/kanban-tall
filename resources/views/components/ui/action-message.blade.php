@@ -5,7 +5,7 @@
 
 <div
     x-data="{ 
-        shown: false, 
+        shown: false,
         timeout: null,
         auto: @js($autoClose)
     }"
@@ -13,13 +13,13 @@
         clearTimeout(timeout);
         shown = true;
         if (auto) {
-            timeout = setTimeout(() => { shown = false }, 3000);
+            timeout = setTimeout(() => { shown = false }, 4000);
         }
     "
     x-show="shown"
     x-transition
     style="display: none"
-    {{ $attributes->merge(['class' => 'flex items-center text-sm']) }}
+    {{ $attributes->merge(['class' => 'flex items-center text-sm p-3 rounded-lg w-full max-w-xs']) }}
 >
     <!-- Content -->
     <span>
