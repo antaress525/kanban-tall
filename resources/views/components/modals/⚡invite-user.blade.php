@@ -83,7 +83,7 @@ new class extends Component
         ]);
 
         Mail::to($email)->send(new BoardInvitationMail( $invitation) );
-        $this->dispatch('notify', type: 'success', message: "L'invitation a ete envoyer");
+        $this->dispatch('user-invited');
 
         $this->reset('search');
     }
@@ -92,12 +92,18 @@ new class extends Component
 
 <div class="flex p-1 min-h-120 max-h-120">
     <!-- Invite User Section -->
-    <div class="p-3.5 flex-1 flex flex-col">
+    <div class="relative p-3.5 flex-1 flex flex-col">
+        <!-- Action Message -->
+        <x-ui.action-message
+            on="user-invited"
+            class="absolute top-1 left-1/2 -translate-x-1/2">
+            Invitation a bien ete envoyer
+        </x-ui.action-message>
+
         <div>
             <h2 class="font-medium">Ajouter un nouveau membre</h2>
             <p class="text-neutral-400 text-sm">Recherchez un collaborateur et envoyez-lui une invitation.</p>
         </div>
-        
         <!-- Search Input -->
         <div class="flex items-center gap-x-2 mt-8">
             <x-ui.input 

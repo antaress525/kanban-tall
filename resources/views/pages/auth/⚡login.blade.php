@@ -16,7 +16,8 @@ new #[Layout('layouts::guest'), Title('Se connecter')] class extends Component
             'email' => $this->form->email,
             'password' => $this->form->password
         ])) {
-            $this->addError('email', 'Les identifiants sont incorrects.');
+            $this->dispatch('error-credentials');
+            $this->reset('form.password');
             return;
         }
 
@@ -31,6 +32,16 @@ new #[Layout('layouts::guest'), Title('Se connecter')] class extends Component
 ?>
 
 <form wire:submit.prevent="login" class="flex flex-col justify-center bg-white border border-neutral-200 rounded-lg w-sm p-6 space-y-6">
+    <!-- Error message -->
+    <x-ui.action-message 
+        on="error-credentials" 
+        type="error"
+        class="mx-auto"
+        :auto-close="false"
+    >
+        Email ou mot de passe incorrect.
+    </x-ui.action-message>
+
     <x-ui.field>
         <x-ui.label>Email</x-ui.label>
         <x-ui.input type="email" wire:model="form.email" name="email" placeholder="Votre email" required autofocus />
