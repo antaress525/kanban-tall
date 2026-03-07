@@ -126,14 +126,7 @@ new class extends Component
             <h3 @click="reveal" x-show="!showEditBoardName" class="text-lg sm:hidden sm:text-xl truncate font-medium">{{ Str::limit(Str::ucfirst($board->name), 9) }}</h3>
         </div>
         <div class="flex items-center gap-x-2">
-            <x-ui.avatar-group>
-                @foreach ($board->members()->limit(3)->get() as $member)
-                    <img src="{{ $member->getAvatarUrl() }}" class="border-2 border-white rounded-lg" alt="">
-                @endforeach
-                @if ($board->members()->count() > 3)
-                    <x-ui.avatar-group-count count="{{ $board->members()->count() - 3 }}" />
-                @endif
-            </x-ui.avatar-group>
+            @include('pages.board.partials.member-list')
             @can('invite', $board)
                 <div class="hidden sm:block">
                     <x-ui.button 

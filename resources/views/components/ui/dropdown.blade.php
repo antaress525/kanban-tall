@@ -4,7 +4,7 @@
 
 <div x-data="{ open: false }" class="relative">
     <!-- Trigger -->
-    <div @click="open = !open" @click.away="open = false">
+    <div @click="open = !open" @click.away="open = false" class="cursor-pointer">
         {{ $trigger }}
     </div>
 
